@@ -67,44 +67,150 @@
 
 </head>
 <body>
-<header class="title">
-    <h1>
-        Lista de Usuários
-    </h1>
-</header>
+    <div class="container">
+        <input type="text" id="inputBusca">
+        <button class="btn-usuarios" onclick="buscarUsuarios()">
+            Procurar
+        </button>
+       <a href="/cadastrar-usuarios" class="btn-cadastrar-usuario">
+    Cadastrar Usuário
+</a>
 
-<div class="container">
-    <input type="text" id="inputBusca">
-    <button class="btn-usuarios" onclick="buscarUsuarios()">
-        Procurar
-    </button>
-    <button class="btn-cadastrar-usuario">
-        Cadastrar Usuário
-    </button>
+        <!-- Tabela para exibir os usuários -->
+        <table class="tabela-usuarios">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCorpo">
+                <!-- Aqui serão listados os usuários -->
+            </tbody>
+        </table>
+    </div>
 
-    <!-- Tabela para exibir os usuários -->
-    <table class="tabela-usuarios">
-        <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody id="tabelaCorpo">
-        <!-- Aqui serão listados os usuários -->
-        <tr>
-            <td>Nome do usuário</td>
-            <td>email@example.com</td>
-            <td>Ativo</td>
-            <td>
-                <button class="btn-alterar-usuario">Alterar</button>
-            </td>
-        </tr>
-        <!-- Adicione mais linhas conforme necessário -->
-        </tbody>
-    </table>
-</div>
+
+<script>
+    async function buscarUsuarios() {
+        try {
+            var nomeUsuario = document.getElementById('inputBusca').value;
+            var response = await fetch(`http://localhost:8080/buscar-usuarios?nome=${nomeUsuario}`);
+
+            if (response.ok) {
+                var usuarios = await response.json();
+                exibirUsuarios(usuarios);
+            } else {
+                console.error('Erro na busca de usuários:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro na busca de usuários:', error);
+        }
+    }
+
+    function exibirUsuarios(usuarios) {
+        var tabelaCorpo = document.getElementById('tabelaCorpo');
+        tabelaCorpo.innerHTML = '';
+
+        usuarios.forEach(function(usuario) {
+            var newRow = tabelaCorpo.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+            cell1.innerHTML = usuario.nome;
+            cell2.innerHTML = usuario.email;
+            cell3.innerHTML = usuario.status === 1 ? 'Ativo' : 'Inativo';
+
+            // Adicione um botão de edição para cada usuário
+            var btnAlterar = document.createElement('button');
+            btnAlterar.className = 'btn-alterar-usuario';
+            btnAlterar.textContent = 'Alterar';
+            btnAlterar.onclick = function() {
+                editarUsuario(newRow, usuario.nome, usuario.status);
+            };
+            cell4.appendChild(btnAlterar);
+        });
+    }
+
+    // Função para editar o usuário
+    function editarUsuario(row, nomeAntigo, statusAntigo) {
+        var cellNome = row.cells[0];
+        var nomeAtual = cellNome.innerHTML;
+
+        // Substituir o texto pelo campo de input
+        cellNome.innerHTML = '<input type="text" class="input-editar" value="' + nomeAtual + '">';
+
+        // Substituir o status por um dropdown
+        var cellStatus = row.cells[2];
+        cellStatus.innerHTML = '<select class="select-editar"><option value="1">Ativo</option><option value="0">Inativo</option></select>';
+        var selectStatus = cellStatus.querySelector('select');
+        selectStatus.value = statusAntigo;
+
+        // Criar botão de salvar
+        var btnSalvar = document.createElement('button');
+        btnSalvar.className = 'btn-salvar-editar';
+        btnSalvar.textContent = 'Salvar';
+        btnSalvar.onclick = function() {
+            salvarEdicao(row, nomeAntigo, selectStatus.value);
+        };
+
+        // Adicionar botão de salvar na célula de ação
+        var cellAcao = row.cells[3];
+        cellAcao.innerHTML = '';
+        cellAcao.className = 'td-editar';
+        cellAcao.appendChild(btnSalvar);
+    }
+
+    // Função para salvar a edição do usuário
+    async function salvarEdicao(row, nomeAntigo, novoStatus) {
+        var cellNome = row.cells[0];
+        var novoNome = cellNome.querySelector('.input-editar').value;
+
+        // Atualize o nome na tela
+        cellNome.innerHTML = novoNome;
+
+        // Restaure o botão de alterar
+        var btnAlterar = document.createElement('button');
+        btnAlterar.className = 'btn-alterar-usuario';
+        btnAlterar.textContent = 'Alterar';
+        btnAlterar.onclick = function() {
+            editarUsuario(row, novoNome, novoStatus);
+        };
+
+        var cellAcao = row.cells[3];
+        cellAcao.innerHTML = '';
+        cellAcao.appendChild(btnAlterar);
+
+        // Adicione a lógica de atualização no banco de dados aqui
+        try {
+            var response = await fetch('http://localhost:8080/atualizar-usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nomeAntigo: nomeAntigo,
+                    novoNome: novoNome,
+                    novoStatus: novoStatus,
+                }),
+            });
+
+            if (!response.ok) {
+                console.error('Erro ao atualizar o usuário:', response.statusText);
+            } else {
+                console.log('Usuário atualizado com sucesso no banco de dados!');
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar o usuário:', error);
+        }
+        
+        
+    }
+</script>
+
 </body>
 </html>

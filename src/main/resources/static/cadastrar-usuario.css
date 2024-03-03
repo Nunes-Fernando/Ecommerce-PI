@@ -3,15 +3,16 @@
 body {
     margin: 0;
     font-family: 'Noto Sans', sans-serif;
-    background-color: #f0f0f0; /* Fundo geral da página */
+    background-color: #f0f0f0;
 }
- 
+
 .main-login {
     width: 100vw;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 20px; /* Adicione esta linha para definir a margem no topo */
 }
  
 .left-login, .right-login {
@@ -63,7 +64,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 10px;
     padding: 15px;
-    margin-top: 8px;
+    margin-top: 15px; /* Ajuste este valor conforme necessário */
     background-color: #f9f9f9; 
     color: #2f2841; 
     font-size: 1em;

@@ -25,6 +25,7 @@ public class CadastrarController {
                                 @RequestParam("senha") String senha,
                                 @RequestParam("verificarSenha") String verificarSenha,
                                 @RequestParam("grupo") String grupo,
+                                @RequestParam("status") String status,
                                 Model model) {
 
         // Verificar se a senha e a confirmação de senha são iguais
@@ -37,7 +38,7 @@ public class CadastrarController {
 
         try (java.sql.Connection conn = connection.getConnection()) {
             if (conn != null) {
-                String query = "INSERT INTO usuarios (nome, cpf, senha, verificarSenha, grupo, email) VALUES (?, ?, ?, ?, ?, ?)";
+                String query = "INSERT INTO usuarios (nome, cpf, senha, verificarSenha, grupo, email, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                     preparedStatement.setString(1, nome);
                     preparedStatement.setString(2, cpf);
@@ -45,6 +46,7 @@ public class CadastrarController {
                     preparedStatement.setString(4, verificarSenha);
                     preparedStatement.setString(5, grupo);
                     preparedStatement.setString(6, email);
+                    preparedStatement.setString(7, status);
 
                     int rowsAffected = preparedStatement.executeUpdate();
 
@@ -66,5 +68,6 @@ public class CadastrarController {
             return "cadastro-usuarios";
         }
     }
+
 }
 
