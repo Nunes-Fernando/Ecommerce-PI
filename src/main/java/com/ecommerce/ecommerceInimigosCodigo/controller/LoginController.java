@@ -25,13 +25,13 @@ public class LoginController {
                 // Usuário autenticado, redirecione para a página principal
                 return "redirect:/principal";
             } else {
-                // Credenciais inválidas, adicione uma mensagem de erro ao modelo e retorne para a página de login
                 model.addAttribute("error", true);
                 return "login";
             }
         } catch (Exception e) {
             e.printStackTrace(); // Trate as exceções adequadamente em um aplicativo real
-            return "redirect:/login?error";
+            model.addAttribute("error", true);
+            return "login";
         }
     }
 }

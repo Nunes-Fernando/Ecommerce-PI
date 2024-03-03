@@ -5,23 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lista-usuarios.css">
     <title>Lista de Usuários</title>
+
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Noto Sans', sans-serif;
+            background-color: #201b2c;
+            color: #00ff88;
+            text-align: center;
+        }
+
+        .container input[type="text"] {
+            width: 35%;
+            padding: 10px;
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            color: #201b2c;
+        }
+
+        .container .btn-usuarios,
+        .container .btn-cadastrar-usuario {
+            padding: 12px 20px;
+            background-color: #00ff88;
+            color: #201b2c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .container .btn-usuarios:hover,
+        .container .btn-cadastrar-usuario:hover {
+            background-color: #009c66;
+        }
+
+        .container .btn-cadastrar-usuario {
+            margin-top: 10px;
+        }
+
+        .tabela-usuarios {
+            width: 100%;
+            margin-top: 20px; /* Adicione o espaçamento desejado */
+        }
+
+        .tabela-usuarios th,
+        .tabela-usuarios td {
+            text-align: center;
+            padding: 10px; /* Adicione o espaçamento desejado */
+        }
+
+        .tabela-usuarios .btn-alterar-usuario {
+            margin: 5px;
+        }
+    </style>
+
+
 </head>
 <body>
-    <header class="title">
-        <h1>
-            Lista de Usuários
-        </h1>
-    </header>
+<header class="title">
+    <h1>
+        Lista de Usuários
+    </h1>
+</header>
 
-    <div class="container">
-        <input type="text">
-        <button class="btn-usuarios">
-            Procurar
-        </button>
-        <button class="btn-cadastrar-usuario">
-            Cadastrar Usuário
-        </button>
-    </div>
+<div class="container">
+    <input type="text" id="inputBusca">
+    <button class="btn-usuarios" onclick="buscarUsuarios()">
+        Procurar
+    </button>
+    <button class="btn-cadastrar-usuario">
+        Cadastrar Usuário
+    </button>
 
+    <!-- Tabela para exibir os usuários -->
+    <table class="tabela-usuarios">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody id="tabelaCorpo">
+        <!-- Aqui serão listados os usuários -->
+        <tr>
+            <td>Nome do usuário</td>
+            <td>email@example.com</td>
+            <td>Ativo</td>
+            <td>
+                <button class="btn-alterar-usuario">Alterar</button>
+            </td>
+        </tr>
+        <!-- Adicione mais linhas conforme necessário -->
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
