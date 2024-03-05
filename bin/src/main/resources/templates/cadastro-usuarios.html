@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cadastrar-usuario.css">
+    <title>Cadastro/Editar Usuário</title>
+</head>
+<body>
+    <div class="main-login">
+        <div class="left-login">
+            <h1>Cadastrar ou Editar Usuário</h1>
+        </div>
+        <div class="right-login">
+            <div class="card-login">
+                <h1>Cadastre-se aqui:</h1>
+                <form action="/salvar" method="post" id="userForm" class="text-field">
+                    <div class="text-field">
+                        <label for="name">Nome do Usuário:</label>
+                        <input type="text" id="name" name="nome" required>
+                    </div>
+                    <div class="text-field">
+                        <label for="cpf">CPF:</label>
+                        <input type="text" id="cpf" name="cpf" required>
+                    </div>
+                    <div class="text-field">
+                        <label for="email">E-mail:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="text-field">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" name="senha" required>
+                    </div>
+                    <div class="text-field">
+                        <label for="password">Confirmar Senha:</label>
+                        <input type="password" id="password" name="verificarSenha" required>
+                    </div>
+                    <div class="text-field">
+                        <label for="group">Grupo:</label>
+                        <select id="group" name="grupo">
+                            <option value="admin">Admin</option>
+                            <option value="estoquista">Estoquista</option>
+                        </select>
+                    </div>
+                    <div class="text-field">
+                        <button type="button" class="btn-cancel">Cancelar</button>
+                        <button type="submit" class="btn-login">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

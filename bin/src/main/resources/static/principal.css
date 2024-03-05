@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #201b2c;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.principal {
+    text-align: center;
+    color: #77ffc0;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 20px; 
+    position: relative; 
+}
+
+.principal::after {
+    content: '';
+    display: block;
+    border-top: 2px solid #77ffc0; 
+    margin: 20px auto 0; 
+    width: 100%; 
+}
+
+.container {
+    text-align: center;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list li {
+    margin-bottom: 40px; /* Adiciona espaçamento entre os itens da lista */
+}
+
+.list li a {
+    text-decoration: none;
+    color: #77ffc0;
+    font-size: 16px;
+    transition: color 0.3s ease, background-color 0.3s ease; /* Adiciona uma transição suave de cor ao passar o mouse */
+    display: inline-block;
+    padding: 10px 16px; /* Ajusta o espaço interno dos botões */
+    border: 1px solid #77ffc0;
+    border-radius: 4px;
+}
+
+.list li a:hover {
+    color: #201b2c; /* Cor do texto ao passar o mouse */
+    background-color: #77ffc0; /* Cor de fundo ao passar o mouse */
+}

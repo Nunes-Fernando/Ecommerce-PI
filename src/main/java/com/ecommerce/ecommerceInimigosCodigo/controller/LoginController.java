@@ -25,11 +25,11 @@ public class LoginController {
                 // Usuário autenticado, redirecione para a página principal
                 return "redirect:/principal";
             } else {
-                model.addAttribute("error", true);
+                model.addAttribute("error", true);  // Define o atributo de erro como verdadeiro
                 return "login";
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Trate as exceções adequadamente em um aplicativo real
+            e.printStackTrace(); 
             model.addAttribute("error", true);
             return "login";
         }

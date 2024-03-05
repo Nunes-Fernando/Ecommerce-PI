@@ -94,7 +94,7 @@ public class Connection {
 	}
 	
 	public List<Map<String, Object>> buscarUsuariosPorNome(String nome) {
-        String query = "SELECT nome, email FROM usuarios WHERE nome LIKE ?";
+        String query = "SELECT nome, cpf, email FROM usuarios WHERE nome LIKE ?";
         List<Map<String, Object>> usuarios = new ArrayList<>();
 
         try (java.sql.Connection connection = getConnection()) {
@@ -107,6 +107,7 @@ public class Connection {
                             Map<String, Object> usuario = new HashMap<>();
                             usuario.put("nome", resultSet.getString("nome"));
                             usuario.put("email", resultSet.getString("email"));
+                            usuario.put("cpf", resultSet.getString("cpf"));
                             usuarios.add(usuario);
                         }
                     }
@@ -173,5 +174,46 @@ public class Connection {
 	        return "cadastro-usuarios";
 	    }
 	}
-	
+	public boolean atualizarUsuario(String nomeAntigo, String novoNome, String novoCpf) {
+        try (java.sql.Connection connection = getConnection()) {
+            if (connection != null) {
+                // Verificar se o usuário existe antes de atualizar
+                String verificaExistenciaQuery = "SELECT * FROM usuarios WHERE nome = ?";
+                try (PreparedStatement existenciaStatement = connection.prepareStatement(verificaExistenciaQuery)) {
+                    existenciaStatement.setString(1, nomeAntigo);
+
+                    try (ResultSet existenciaResultSet = existenciaStatement.executeQuery()) {
+                        if (!existenciaResultSet.next()) {
+                            System.out.println("Usuário não encontrado para atualização.");
+                            return false;
+                        }
+                    }
+                }
+
+                // Atualizar o usuário
+                String atualizarQuery = "UPDATE usuarios SET nome=?, cpf=? WHERE nome=?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(atualizarQuery)) {
+                    preparedStatement.setString(1, novoNome);
+                    preparedStatement.setString(2, novoCpf);
+                    preparedStatement.setString(3, nomeAntigo);
+
+                    int rowsAffected = preparedStatement.executeUpdate();
+
+                    if (rowsAffected > 0) {
+                        System.out.println("Usuário atualizado com sucesso!");
+                        return true;
+                    } else {
+                        System.out.println("Falha ao atualizar usuário. Nenhuma linha afetada.");
+                        return false;
+                    }
+                }
+            } else {
+                System.out.println("A conexão não está aberta. Verifique sua configuração.");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -15,6 +15,10 @@
         <div class="right-login">
             <div class="card-login">
                 <h1>Login Administrativo</h1>
+                <div th:if="${error}" class="error-message">
+   				 Login ou senha inválidos. Por favor, tente novamente.
+				</div>
+
                 <form action="/processar-login" method="post">
                     <div class="text-field">
                         <label for="usuario">Usuário</label>
@@ -26,8 +30,8 @@
                     </div>
                     <button type="submit" class="btn-login">Login</button>
                 </form>
+                 <a href="/cadastrar-usuarios" class="cadastro-link">Não tem uma conta? Cadastre-se</a>
             </div>
         </div>
     </div>
 </body>
-</html>

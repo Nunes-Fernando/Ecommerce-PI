@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lista-usuarios.css">
+    <title>Lista de Usuários</title>
+
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Noto Sans', sans-serif;
+            background-color: #201b2c;
+            color: #00ff88;
+            text-align: center;
+        }
+
+        .container input[type="text"] {
+            width: 35%;
+            padding: 10px;
+            border: 2px solid #00ff88;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            color: #201b2c;
+        }
+
+        .container .btn-usuarios,
+        .container .btn-cadastrar-usuario {
+            padding: 12px 20px;
+            background-color: #00ff88;
+            color: #201b2c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .container .btn-usuarios:hover,
+        .container .btn-cadastrar-usuario:hover {
+            background-color: #009c66;
+        }
+
+        .container .btn-cadastrar-usuario {
+            margin-top: 10px;
+        }
+
+        .tabela-usuarios {
+            width: 100%;
+            margin-top: 20px; /* Adicione o espaçamento desejado */
+        }
+
+        .tabela-usuarios th,
+        .tabela-usuarios td {
+            text-align: center;
+            padding: 10px; /* Adicione o espaçamento desejado */
+        }
+
+        .tabela-usuarios .btn-alterar-usuario {
+            margin: 5px;
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="inputBusca">
+        <button class="btn-usuarios" onclick="buscarUsuarios()">
+            Procurar
+        </button>
+       <a href="/cadastrar-usuarios" class="btn-cadastrar-usuario">
+    Cadastrar Usuário
+</a>
+
+        <!-- Tabela para exibir os usuários -->
+        <table class="tabela-usuarios">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaCorpo">
+                <!-- Aqui serão listados os usuários -->
+            </tbody>
+        </table>
+    </div>
+
+
+<script>
+    async function buscarUsuarios() {
+        try {
+            var nomeUsuario = document.getElementById('inputBusca').value;
+            var response = await fetch(`http://localhost:8080/buscar-usuarios?nome=${nomeUsuario}`);
+
+            if (response.ok) {
+                var usuarios = await response.json();
+                exibirUsuarios(usuarios);
+            } else {
+                console.error('Erro na busca de usuários:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro na busca de usuários:', error);
+        }
+    }
+
+    function exibirUsuarios(usuarios) {
+        var tabelaCorpo = document.getElementById('tabelaCorpo');
+        tabelaCorpo.innerHTML = '';
+
+        usuarios.forEach(function(usuario) {
+            var newRow = tabelaCorpo.insertRow();
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+            cell1.innerHTML = usuario.nome;
+            cell2.innerHTML = usuario.email;
+            cell3.innerHTML = usuario.status === 1 ? 'Ativo' : 'Inativo';
+
+            // Adicione um botão de edição para cada usuário
+            var btnAlterar = document.createElement('button');
+            btnAlterar.className = 'btn-alterar-usuario';
+            btnAlterar.textContent = 'Alterar';
+            btnAlterar.onclick = function() {
+                editarUsuario(newRow, usuario.nome, usuario.status);
+            };
+            cell4.appendChild(btnAlterar);
+        });
+    }
+
+    // Função para editar o usuário
+    function editarUsuario(row, nomeAntigo, statusAntigo) {
+        var cellNome = row.cells[0];
+        var nomeAtual = cellNome.innerHTML;
+
+        // Substituir o texto pelo campo de input
+        cellNome.innerHTML = '<input type="text" class="input-editar" value="' + nomeAtual + '">';
+
+        // Substituir o status por um dropdown
+        var cellStatus = row.cells[2];
+        cellStatus.innerHTML = '<select class="select-editar"><option value="1">Ativo</option><option value="0">Inativo</option></select>';
+        var selectStatus = cellStatus.querySelector('select');
+        selectStatus.value = statusAntigo;
+
+        // Criar botão de salvar
+        var btnSalvar = document.createElement('button');
+        btnSalvar.className = 'btn-salvar-editar';
+        btnSalvar.textContent = 'Salvar';
+        btnSalvar.onclick = function() {
+            salvarEdicao(row, nomeAntigo, selectStatus.value);
+        };
+
+        // Adicionar botão de salvar na célula de ação
+        var cellAcao = row.cells[3];
+        cellAcao.innerHTML = '';
+        cellAcao.className = 'td-editar';
+        cellAcao.appendChild(btnSalvar);
+    }
+
+    // Função para salvar a edição do usuário
+    async function salvarEdicao(row, nomeAntigo, novoStatus) {
+        var cellNome = row.cells[0];
+        var novoNome = cellNome.querySelector('.input-editar').value;
+
+        // Atualize o nome na tela
+        cellNome.innerHTML = novoNome;
+
+        // Restaure o botão de alterar
+        var btnAlterar = document.createElement('button');
+        btnAlterar.className = 'btn-alterar-usuario';
+        btnAlterar.textContent = 'Alterar';
+        btnAlterar.onclick = function() {
+            editarUsuario(row, novoNome, novoStatus);
+        };
+
+        var cellAcao = row.cells[3];
+        cellAcao.innerHTML = '';
+        cellAcao.appendChild(btnAlterar);
+
+        // Adicione a lógica de atualização no banco de dados aqui
+        try {
+            var response = await fetch('http://localhost:8080/atualizar-usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nomeAntigo: nomeAntigo,
+                    novoNome: novoNome,
+                    novoStatus: novoStatus,
+                }),
+            });
+
+            if (!response.ok) {
+                console.error('Erro ao atualizar o usuário:', response.statusText);
+            } else {
+                console.log('Usuário atualizado com sucesso no banco de dados!');
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar o usuário:', error);
+        }
+        
+        
+    }
+</script>
+
+</body>
+</html>

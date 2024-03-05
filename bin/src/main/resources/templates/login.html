@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,21 +9,23 @@
 <body>
     <div class="main-login">
         <div class="left-login">
-            <h1>Faça o login<br> para conhecer nossos serviços </h1>
+            <h1>Acesso restrito<br> a funcionários e administradores </h1>
             <img src="imagem-login.gif" alt="imagem de pesquisa" class="login-image">
         </div>
         <div class="right-login">
             <div class="card-login">
-                <h1>Login</h1>
-                <div class="text-field">
-                    <label for="usuario">Usuário</label>
-                    <input type="text" name="usuario" placeholder="Usuário">
-                </div>
-                <div class="text-field">
-                    <label for="senha">Senha</label>
-                    <input type="password" name="senha" placeholder="Senha">
-                </div>
-                <button class="btn-login">Login</button>
+                <h1>Login Administrativo</h1>
+                <form action="/processar-login" method="post">
+                    <div class="text-field">
+                        <label for="usuario">Usuário</label>
+                        <input type="text" name="usuario" placeholder="Usuário">
+                    </div>
+                    <div class="text-field">
+                        <label for="senha">Senha</label>
+                        <input type="password" name="senha" placeholder="Senha">
+                    </div>
+                    <button type="submit" class="btn-login">Login</button>
+                </form>
             </div>
         </div>
     </div>
