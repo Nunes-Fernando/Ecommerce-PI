@@ -25,7 +25,7 @@ public class CadastrarController {
                                 @RequestParam("senha") String senha,
                                 @RequestParam("verificarSenha") String verificarSenha,
                                 @RequestParam("grupo") String grupo,
-                                @RequestParam("status") String status,
+                                @RequestParam(value = "status", defaultValue = "0") String status,
                                 Model model) {
 
         // Verificar se a senha e a confirmação de senha são iguais

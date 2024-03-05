@@ -213,37 +213,35 @@
     }
 
     async function salvarEdicao() {
-        try {
-            const nome = document.getElementById('editNome').value;
-            const cpf = document.getElementById('editCpf').value;
-            const status = document.getElementById('editStatus').value;
+    try {
+        const nome = document.getElementById('editNome').value;
+        const cpf = document.getElementById('editCpf').value;
 
-            // Adicione a lógica para atualizar no banco de dados aqui
-            const response = await fetch('http://localhost:8080/atualizar-usuario', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    nome: nome,
-                    cpf: cpf,
-                    status: status,
-                }),
-            });
+        // Adicione a lógica para atualizar no banco de dados aqui
+        const response = await fetch('http://localhost:8080/atualizar-usuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nome: nome,
+                cpf: cpf,
+            }),
+        });
 
-            if (!response.ok) {
-                console.error('Erro ao atualizar o usuário:', response.statusText);
-            } else {
-                console.log('Usuário atualizado com sucesso no banco de dados!');
-                // Fechar o modal após o salvamento
-                fecharModalEditar();
-                // Recarregar a lista de usuários
-                buscarUsuarios();
-            }
-        } catch (error) {
-            console.error('Erro ao atualizar o usuário:', error);
+        if (!response.ok) {
+            console.error('Erro ao atualizar o usuário:', response.statusText);
+        } else {
+            console.log('Usuário atualizado com sucesso no banco de dados!');
+            // Fechar o modal após o salvamento
+            fecharModalEditar();
+            // Recarregar a lista de usuários
+            buscarUsuarios();
         }
+    } catch (error) {
+        console.error('Erro ao atualizar o usuário:', error);
     }
+}
 
     function fecharModalEditar() {
         // Limpar os campos do modal
