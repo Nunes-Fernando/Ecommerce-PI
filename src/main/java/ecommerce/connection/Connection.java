@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class Connection {
 	private static String url = "jdbc:mysql://localhost:3306/consulta";
 	private static String user = "root";
-	private static String password = "";
+	private static String password = "1234";
 	private static java.sql.Connection conn = null;
 
 	public static java.sql.Connection getConnection() {
