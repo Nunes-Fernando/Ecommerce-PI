@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceInimigosCodigo.controller;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +17,19 @@ import ecommerce.connection.Connection;
 @Controller
 public class ListaUsuarios {
 
-	@GetMapping("/lista-usuarios")
-	public String showLoginPage() {
-		return "lista-usuario";
-	}
+    @GetMapping("/lista-usuarios")
+    @ResponseBody
+    public List<Map<String, Object>> listarUsuarios() {
+        Connection connection = new Connection();
+        try {
+            return connection.buscarTodosUsuarios();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Trate adequadamente os erros de banco de dados aqui
+            return Collections.emptyList();
+        }
+    }
+
     @PostMapping("/atualizar-usuario")
     @ResponseBody
     public String atualizarUsuario(@RequestBody Map<String, Object> usuarioAtualizado) {

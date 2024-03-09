@@ -100,19 +100,6 @@ body {
     width: 30vw;;
 }
 
-.cadastro-link {
-    color: #007BFF; /* Cor do link */
-    text-decoration: none; /* Remover sublinhado padrão */
-    display: inline-block; /* Manter apenas a largura do conteúdo */
-    margin-top: 10px; /* Espaçamento superior */
-    font-weight: bold; /* Adicionar negrito ao texto */
-    transition: color 0.3s ease; /* Adicionar transição suave na cor ao passar o mouse */
-}
-
-.cadastro-link:hover {
-    color: #0056b3; /* Cor de destaque ao passar o mouse */
-}
-
 .error-message {
     color: #ff4d4d; /* Cor para mensagens de erro */
     margin-top: 10px; /* Espaçamento superior */

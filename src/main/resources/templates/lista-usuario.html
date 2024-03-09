@@ -159,6 +159,25 @@
     
 
 <script>
+    async function carregarUsuarios() {
+    try {
+        const url = 'http://localhost:8080/lista-usuarios'; // Endpoint para obter todos os usuários
+        const response = await fetch(url);
+
+        if (response.ok) {
+            const usuarios = await response.json();
+            exibirUsuarios(usuarios);
+        } else {
+            console.error('Erro ao carregar usuários:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+    }
+}
+
+// Chame a função carregarUsuarios assim que a página for carregada
+document.addEventListener('DOMContentLoaded', carregarUsuarios);
+
     async function buscarUsuarios() {
         try {
             const inputBusca = document.getElementById('inputBusca');
