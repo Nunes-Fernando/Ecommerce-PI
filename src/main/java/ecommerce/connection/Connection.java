@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class Connection {
 	private static String url = "jdbc:mysql://localhost:3306/consulta";
 	private static String user = "root";
-	private static String password = "root";
+	private static String password = "1234";
 	private static java.sql.Connection conn = null;
 
 	public static java.sql.Connection getConnection() {
@@ -92,7 +92,7 @@ public class Connection {
 	        return false;
 	    }
 	}
-	
+
 	public List<Map<String, Object>> buscarUsuariosPorNome(String nome) {
         String query = "SELECT nome, cpf, email FROM usuarios WHERE nome LIKE ?";
         List<Map<String, Object>> usuarios = new ArrayList<>();
@@ -216,4 +216,31 @@ public class Connection {
             return false;
         }
     }
+	public List<Map<String, Object>> buscarTodosUsuarios() throws SQLException {
+		String query = "SELECT nome, cpf, email, status FROM usuarios";
+		List<Map<String, Object>> usuarios = new ArrayList<>();
+
+		try (java.sql.Connection connection = getConnection()) {
+			if (connection != null) {
+				try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+					try (ResultSet resultSet = preparedStatement.executeQuery()) {
+						while (resultSet.next()) {
+							Map<String, Object> usuario = new HashMap<>();
+							usuario.put("nome", resultSet.getString("nome"));
+							usuario.put("cpf", resultSet.getString("cpf"));
+							usuario.put("email", resultSet.getString("email"));
+							usuario.put("status", resultSet.getInt("status")); // assumindo que o status é um int no banco de dados
+							usuarios.add(usuario);
+						}
+					}
+				}
+			} else {
+				System.out.println("A conexão não está aberta. Verifique sua configuração.");
+			}
+		} catch (SQLException e) {
+			throw e; // relança a exceção para que o chamador possa lidar com ela adequadamente
+		}
+
+		return usuarios;
+	}
 }

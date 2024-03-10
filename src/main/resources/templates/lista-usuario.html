@@ -159,100 +159,133 @@
     
 
 <script>
-    async function buscarUsuarios() {
-        try {
-            const inputBusca = document.getElementById('inputBusca');
-            const nomeUsuario = inputBusca.value.trim();
+    async function carregarUsuarios() {
+       console.log("Carregando usuários...");
+       try {
+           const url = 'http://localhost:8080/lista-usuarios'; // Endpoint para obter todos os usuários
+           const response = await fetch(url);
 
-            // Validação: Verificar se o campo de busca não está vazio
-            if (nomeUsuario === '') {
-                console.log('Por favor, insira um nome para buscar.');
-                return;
-            }
+           if (response.ok) {
+               const usuarios = await response.json();
+               exibirUsuarios(usuarios);
+           } else {
+               console.error('Erro ao carregar usuários:', response.statusText);
+           }
+       } catch (error) {
+           console.error('Erro ao carregar usuários:', error);
+       }
+   }
 
-            // Construir a URL da requisição com encodeURIComponent
-            const url = `http://localhost:8080/buscar-usuarios?nome=${encodeURIComponent(nomeUsuario)}`;
-            const response = await fetch(url);
+   // Chame a função carregarUsuarios assim que a página for carregada
+   document.addEventListener('DOMContentLoaded', carregarUsuarios);
 
-            if (response.ok) {
-                const usuarios = await response.json();
-                exibirUsuarios(usuarios);
-            } else {
-                console.error('Erro na busca de usuários:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Erro na busca de usuários:', error);
-        }
-    }
+   // Função para exibir usuários na tabela
+   function exibirUsuarios(usuarios) {
+       const tabelaCorpo = document.getElementById('tabelaCorpo');
+       tabelaCorpo.innerHTML = '';
 
-    function exibirUsuarios(usuarios) {
-        const tabelaCorpo = document.getElementById('tabelaCorpo');
-        tabelaCorpo.innerHTML = '';
+       usuarios.forEach(usuario => {
+           const newRow = tabelaCorpo.insertRow();
+           newRow.innerHTML = `
+               <!-- Conteúdo da linha da tabela -->
+           `;
+       });
+   }
 
-        usuarios.forEach(usuario => {
-            const newRow = tabelaCorpo.insertRow();
-            newRow.innerHTML = `
-                <td>${usuario.nome}</td>
-                <td>${usuario.cpf || 'N/A'}</td>
-                <td>${usuario.email}</td>
-                <td>${usuario.status === 1 ? 'Ativo' : 'Inativo'}</td>
-                <td><button class="btn-alterar-usuario" onclick="editarUsuario('${usuario.nome}', '${usuario.cpf}', ${usuario.status})">Alterar</button></td>
-            `;
-        });
-    }
+   async function buscarUsuarios() {
+       try {
+           const inputBusca = document.getElementById('inputBusca');
+           const nomeUsuario = inputBusca.value.trim();
 
-    function editarUsuario(nome, cpf, status) {
-        // Preencher os campos do modal com os dados do usuário
-        document.getElementById('editNome').value = nome;
-        document.getElementById('editCpf').value = cpf;
-        document.getElementById('editStatus').value = status;
+           // Validação: Verificar se o campo de busca não está vazio
+           if (nomeUsuario === '') {
+               console.log('Por favor, insira um nome para buscar.');
+               return;
+           }
 
-        // Exibir o modal de edição
-        const modalEditar = document.getElementById('modalEditar');
-        modalEditar.style.display = 'block';
-    }
+           // Construir a URL da requisição com encodeURIComponent
+           const url = `http://localhost:8080/buscar-usuarios?nome=${encodeURIComponent(nomeUsuario)}`;
+           const response = await fetch(url);
 
-    async function salvarEdicao() {
-    try {
-        const nome = document.getElementById('editNome').value;
-        const cpf = document.getElementById('editCpf').value;
+           if (response.ok) {
+               const usuarios = await response.json();
+               exibirUsuarios(usuarios);
+           } else {
+               console.error('Erro na busca de usuários:', response.statusText);
+           }
+       } catch (error) {
+           console.error('Erro na busca de usuários:', error);
+       }
+   }
 
-        // Adicione a lógica para atualizar no banco de dados aqui
-        const response = await fetch('http://localhost:8080/atualizar-usuario', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                nome: nome,
-                cpf: cpf,
-            }),
-        });
+   function exibirUsuarios(usuarios) {
+       const tabelaCorpo = document.getElementById('tabelaCorpo');
+       tabelaCorpo.innerHTML = '';
 
-        if (!response.ok) {
-            console.error('Erro ao atualizar o usuário:', response.statusText);
-        } else {
-            console.log('Usuário atualizado com sucesso no banco de dados!');
-            // Fechar o modal após o salvamento
-            fecharModalEditar();
-            // Recarregar a lista de usuários
-            buscarUsuarios();
-        }
-    } catch (error) {
-        console.error('Erro ao atualizar o usuário:', error);
-    }
+       usuarios.forEach(usuario => {
+           const newRow = tabelaCorpo.insertRow();
+           newRow.innerHTML = `
+               <td>${usuario.nome}</td>
+               <td>${usuario.cpf || 'N/A'}</td>
+               <td>${usuario.email}</td>
+               <td>${usuario.status === 1 ? 'Ativo' : 'Inativo'}</td>
+               <td><button class="btn-alterar-usuario" onclick="editarUsuario('${usuario.nome}', '${usuario.cpf}', ${usuario.status})">Alterar</button></td>
+           `;
+       });
+   }
+
+   function editarUsuario(nome, cpf, status) {
+       // Preencher os campos do modal com os dados do usuário
+       document.getElementById('editNome').value = nome;
+       document.getElementById('editCpf').value = cpf;
+       document.getElementById('editStatus').value = status;
+
+       // Exibir o modal de edição
+       const modalEditar = document.getElementById('modalEditar');
+       modalEditar.style.display = 'block';
+   }
+
+   async function salvarEdicao() {
+   try {
+       const nome = document.getElementById('editNome').value;
+       const cpf = document.getElementById('editCpf').value;
+
+       // Adicione a lógica para atualizar no banco de dados aqui
+       const response = await fetch('http://localhost:8080/atualizar-usuario', {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               nome: nome,
+               cpf: cpf,
+           }),
+       });
+
+       if (!response.ok) {
+           console.error('Erro ao atualizar o usuário:', response.statusText);
+       } else {
+           console.log('Usuário atualizado com sucesso no banco de dados!');
+           // Fechar o modal após o salvamento
+           fecharModalEditar();
+           // Recarregar a lista de usuários
+           buscarUsuarios();
+       }
+   } catch (error) {
+       console.error('Erro ao atualizar o usuário:', error);
+   }
 }
 
-    function fecharModalEditar() {
-        // Limpar os campos do modal
-        document.getElementById('editNome').value = '';
-        document.getElementById('editCpf').value = '';
-        document.getElementById('editStatus').value = '';
+   function fecharModalEditar() {
+       // Limpar os campos do modal
+       document.getElementById('editNome').value = '';
+       document.getElementById('editCpf').value = '';
+       document.getElementById('editStatus').value = '';
 
-        // Fechar o modal
-        const modalEditar = document.getElementById('modalEditar');
-        modalEditar.style.display = 'none';
-    }
+       // Fechar o modal
+       const modalEditar = document.getElementById('modalEditar');
+       modalEditar.style.display = 'none';
+   }
 </script>
 
 <div id="modalEditar" class="modal">

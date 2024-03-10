@@ -1,10 +1,12 @@
 package com.ecommerce.ecommerceInimigosCodigo.controller;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,11 +17,21 @@ import ecommerce.connection.Connection;
 
 @Controller
 public class ListaUsuarios {
+    @GetMapping("/lista-usuarios")
+    public String showUserListPage(Model model) {
+        Connection connection = new Connection();
+        try {
+            List<Map<String, Object>> usuarios = connection.buscarTodosUsuarios();
+            model.addAttribute("usuarios", usuarios);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Trate adequadamente os erros de banco de dados aqui
+            model.addAttribute("usuarios", Collections.emptyList());
+        }
+        return "lista-usuario"; // Retorne a visualização da página de listagem de usuários
+    }
 
-	@GetMapping("/lista-usuarios")
-	public String showLoginPage() {
-		return "lista-usuario";
-	}
+
     @PostMapping("/atualizar-usuario")
     @ResponseBody
     public String atualizarUsuario(@RequestBody Map<String, Object> usuarioAtualizado) {
@@ -47,6 +59,7 @@ public class ListaUsuarios {
             return "Erro ao conectar ao banco de dados";
         }
     }
+
 
     // Método para verificar se um usuário está ativo
     private boolean isUsuarioAtivo(String nome) {
