@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,14 +18,8 @@
             text-align: center;
         }
 
-        .container input[type="text"] {
-            width: 35%;
-            padding: 10px;
-            border: 2px solid #00ff88;
-            border-radius: 5px;
-            outline: none;
-            font-size: 16px;
-            color: #201b2c;
+        .container {
+            padding: 20px;
         }
 
         .container .btn-usuarios,
@@ -37,6 +32,7 @@
             cursor: pointer;
             font-size: 18px;
             transition: background-color 0.3s ease;
+            margin-bottom: 10px;
         }
 
         .container .btn-usuarios:hover,
@@ -44,100 +40,89 @@
             background-color: #009c66;
         }
 
-        .container .btn-cadastrar-usuario {
-            margin-top: 10px;
-        }
-
         .tabela-usuarios {
             width: 100%;
-            margin-top: 20px; /* Adicione o espaçamento desejado */
+            margin-top: 20px;
         }
 
         .tabela-usuarios th,
         .tabela-usuarios td {
             text-align: center;
-            padding: 10px; /* Adicione o espaçamento desejado */
+            padding: 10px;
         }
 
         .tabela-usuarios .btn-alterar-usuario {
             margin: 5px;
         }
-        
-      
-   .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
 
-.modal-content {
-    background-color: #2c3e50;
-    margin: 10% auto;
-    padding: 20px;
-    border: 2px solid #00ff88;
-    border-radius: 8px;
-    max-width: 400px;
-    color: #ecf0f1;
-}
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
-/* Estilos do botão de fechar */
-.close {
-    color: #00ff88;
-    float: right;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-}
+        .modal-content {
+            background-color: #2c3e50;
+            margin: 10% auto;
+            padding: 20px;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            max-width: 400px;
+            color: #ecf0f1;
+        }
 
-.close:hover {
-    color: #009c66;
-}
+        .close {
+            color: #00ff88;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-/* Estilos dos campos do formulário no modal */
-.modal-content label {
-    display: block;
-    margin: 10px 0;
-}
+        .close:hover {
+            color: #009c66;
+        }
 
-.modal-content input,
-.modal-content select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    border: 1px solid #00ff88;
-    border-radius: 5px;
-    background-color: #34495e;
-    color: #ecf0f1;
-}
+        .modal-content label {
+            display: block;
+            margin: 10px 0;
+        }
 
-/* Estilos do botão de salvar no modal */
-.btn-alterar-usuario {
-    background-color: #00ff88;
-    color: #2c3e50;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
+        .modal-content input,
+        .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
 
-.btn-alterar-usuario:hover {
-    background-color: #009c66;
-}
+        .btn-alterar-usuario {
+            background-color: #00ff88;
+            color: #2c3e50;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-alterar-usuario:hover {
+            background-color: #009c66;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <input type="text" id="inputBusca">
-        <button class="btn-usuarios" onclick="buscarUsuarios()">
-            Procurar
-        </button>
         <a href="/cadastrar-usuarios" class="btn-cadastrar-usuario">Cadastrar Usuário</a>
 
         <!-- Tabela para exibir os usuários -->
@@ -156,161 +141,52 @@
             </tbody>
         </table>
     </div>
-    
 
-<script>
-    async function carregarUsuarios() {
-       console.log("Carregando usuários...");
-       try {
-           const url = 'http://localhost:8080/lista-usuarios'; // Endpoint para obter todos os usuários
-           const response = await fetch(url);
+ <script>
+        // Chame a função carregarUsuarios assim que a página for carregada
+        document.addEventListener('DOMContentLoaded', carregarUsuarios);
 
-           if (response.ok) {
-               const usuarios = await response.json();
-               exibirUsuarios(usuarios);
-           } else {
-               console.error('Erro ao carregar usuários:', response.statusText);
-           }
-       } catch (error) {
-           console.error('Erro ao carregar usuários:', error);
-       }
-   }
+ async function carregarUsuarios() {
+    console.log("Carregando usuários...");
+    try {
+        const url = 'http://localhost:9090/lista-usuarios';
+        const response = await fetch(url);
 
-   // Chame a função carregarUsuarios assim que a página for carregada
-   document.addEventListener('DOMContentLoaded', carregarUsuarios);
-
-   // Função para exibir usuários na tabela
-   function exibirUsuarios(usuarios) {
-       const tabelaCorpo = document.getElementById('tabelaCorpo');
-       tabelaCorpo.innerHTML = '';
-
-       usuarios.forEach(usuario => {
-           const newRow = tabelaCorpo.insertRow();
-           newRow.innerHTML = `
-               <!-- Conteúdo da linha da tabela -->
-           `;
-       });
-   }
-
-   async function buscarUsuarios() {
-       try {
-           const inputBusca = document.getElementById('inputBusca');
-           const nomeUsuario = inputBusca.value.trim();
-
-           // Validação: Verificar se o campo de busca não está vazio
-           if (nomeUsuario === '') {
-               console.log('Por favor, insira um nome para buscar.');
-               return;
-           }
-
-           // Construir a URL da requisição com encodeURIComponent
-           const url = `http://localhost:8080/buscar-usuarios?nome=${encodeURIComponent(nomeUsuario)}`;
-           const response = await fetch(url);
-
-           if (response.ok) {
-               const usuarios = await response.json();
-               exibirUsuarios(usuarios);
-           } else {
-               console.error('Erro na busca de usuários:', response.statusText);
-           }
-       } catch (error) {
-           console.error('Erro na busca de usuários:', error);
-       }
-   }
-
-   function exibirUsuarios(usuarios) {
-       const tabelaCorpo = document.getElementById('tabelaCorpo');
-       tabelaCorpo.innerHTML = '';
-
-       usuarios.forEach(usuario => {
-           const newRow = tabelaCorpo.insertRow();
-           newRow.innerHTML = `
-               <td>${usuario.nome}</td>
-               <td>${usuario.cpf || 'N/A'}</td>
-               <td>${usuario.email}</td>
-               <td>${usuario.status === 1 ? 'Ativo' : 'Inativo'}</td>
-               <td><button class="btn-alterar-usuario" onclick="editarUsuario('${usuario.nome}', '${usuario.cpf}', ${usuario.status})">Alterar</button></td>
-           `;
-       });
-   }
-
-   function editarUsuario(nome, cpf, status) {
-       // Preencher os campos do modal com os dados do usuário
-       document.getElementById('editNome').value = nome;
-       document.getElementById('editCpf').value = cpf;
-       document.getElementById('editStatus').value = status;
-
-       // Exibir o modal de edição
-       const modalEditar = document.getElementById('modalEditar');
-       modalEditar.style.display = 'block';
-   }
-
-   async function salvarEdicao() {
-   try {
-       const nome = document.getElementById('editNome').value;
-       const cpf = document.getElementById('editCpf').value;
-
-       // Adicione a lógica para atualizar no banco de dados aqui
-       const response = await fetch('http://localhost:8080/atualizar-usuario', {
-           method: 'POST',
-           headers: {
-               'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({
-               nome: nome,
-               cpf: cpf,
-           }),
-       });
-
-       if (!response.ok) {
-           console.error('Erro ao atualizar o usuário:', response.statusText);
-       } else {
-           console.log('Usuário atualizado com sucesso no banco de dados!');
-           // Fechar o modal após o salvamento
-           fecharModalEditar();
-           // Recarregar a lista de usuários
-           buscarUsuarios();
-       }
-   } catch (error) {
-       console.error('Erro ao atualizar o usuário:', error);
-   }
+        if (response.ok) {
+            const usuarios = await response.json();
+            console.log("Usuários carregados com sucesso:", usuarios);
+            exibirUsuarios(usuarios);
+        } else {
+            console.error('Erro ao carregar usuários:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+    }
 }
 
-   function fecharModalEditar() {
-       // Limpar os campos do modal
-       document.getElementById('editNome').value = '';
-       document.getElementById('editCpf').value = '';
-       document.getElementById('editStatus').value = '';
+function exibirUsuarios(usuarios) {
+    const tabelaCorpo = document.getElementById('tabelaCorpo');
+    tabelaCorpo.innerHTML = '';
 
-       // Fechar o modal
-       const modalEditar = document.getElementById('modalEditar');
-       modalEditar.style.display = 'none';
-   }
-</script>
+    if (usuarios.length === 0) {
+        console.log("A lista de usuários está vazia.");
+        return;
+    }
 
-<div id="modalEditar" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="fecharModalEditar()">&times;</span>
-        <h2>Editar Usuário</h2>
-        <form id="formEditarUsuario">
-            <label for="editNome">Nome:</label>
-            <input type="text" id="editNome" required>
-            
-            <label for="editCpf">CPF:</label>
-            <input type="text" id="editCpf" required>
-            
-            <label for="editSenha">Nova Senha:</label>
-            <input type="password" id="editSenha">
-            
-            <label for="editStatus">Status:</label>
-            <select id="editStatus">
-                <option value="1">Ativo</option>
-                <option value="0">Inativo</option>
-            </select>
-            
-            <button type="button" class="btn-alterar-usuario" onclick="salvarEdicao()">Salvar</button>
-        </form>
-    </div>
-</div>
+    usuarios.forEach(usuario => {
+        const newRow = tabelaCorpo.insertRow();
+        newRow.innerHTML = `
+            <td>${usuario.nome}</td>
+            <td>${usuario.cpf || 'N/A'}</td>
+            <td>${usuario.email}</td>
+            <td>${usuario.status === 1 ? 'Ativo' : 'Inativo'}</td>
+            <td><button class="btn-alterar-usuario" onclick="editarUsuario('${usuario.nome}', '${usuario.cpf}', ${usuario.status})">Alterar</button></td>
+        `;
+    });
+
+    console.log("Usuários exibidos na tabela com sucesso.");
+}
+    </script>
 </body>
+
 </html>

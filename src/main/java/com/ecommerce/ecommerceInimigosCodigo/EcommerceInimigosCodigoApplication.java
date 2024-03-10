@@ -9,5 +9,4 @@ public class EcommerceInimigosCodigoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EcommerceInimigosCodigoApplication.class, args);
 	}
-
 }
