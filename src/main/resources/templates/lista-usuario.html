@@ -4,121 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="lista-usuarios.css">
+    <link rel="stylesheet" href="lista-usuario.css">
     <title>Lista de Usuários</title>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
-
-        body {
-            margin: 0;
-            font-family: 'Noto Sans', sans-serif;
-            background-color: #201b2c;
-            color: #00ff88;
-            text-align: center;
-        }
-
-        .container {
-            padding: 20px;
-        }
-
-        .container .btn-usuarios,
-        .container .btn-cadastrar-usuario {
-            padding: 12px 20px;
-            background-color: #00ff88;
-            color: #201b2c;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s ease;
-            margin-bottom: 10px;
-        }
-
-        .container .btn-usuarios:hover,
-        .container .btn-cadastrar-usuario:hover {
-            background-color: #009c66;
-        }
-
-        .tabela-usuarios {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .tabela-usuarios th,
-        .tabela-usuarios td {
-            text-align: center;
-            padding: 10px;
-        }
-
-        .tabela-usuarios .btn-alterar-usuario {
-            margin: 5px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #2c3e50;
-            margin: 10% auto;
-            padding: 20px;
-            border: 2px solid #00ff88;
-            border-radius: 8px;
-            max-width: 400px;
-            color: #ecf0f1;
-        }
-
-        .close {
-            color: #00ff88;
-            float: right;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: #009c66;
-        }
-
-        .modal-content label {
-            display: block;
-            margin: 10px 0;
-        }
-
-        .modal-content input,
-        .modal-content select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            border: 1px solid #00ff88;
-            border-radius: 5px;
-            background-color: #34495e;
-            color: #ecf0f1;
-        }
-
-        .btn-alterar-usuario {
-            background-color: #00ff88;
-            color: #2c3e50;
-            padding: 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-alterar-usuario:hover {
-            background-color: #009c66;
-        }
-    </style>
 </head>
 
 <body>
@@ -130,10 +17,10 @@
             <thead>
                 <tr>
                     <th>Nome</th>
-                    <th>CPF</th>
                     <th>Email</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th>Grupo</th>
+                    <th>Ação</th>
                 </tr>
             </thead>
             <tbody id="tabelaCorpo">
@@ -142,50 +29,150 @@
         </table>
     </div>
 
- <script>
+    <!-- Modal para alterar informações do usuário -->
+    <div id="modalAlterarUsuario" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalAlterarUsuario()">&times;</span>
+            <h2>Alterar Informações do Usuário</h2>
+            <form id="formAlterarUsuario">
+                <label for="novoNome">Novo Nome:</label>
+                <input type="text" id="novoNome" name="novoNome" required>
+
+                <label for="novoCPF">Novo CPF:</label>
+                <input type="text" id="novoCPF" name="novoCPF" required>
+
+                <label for="novaSenha">Nova Senha:</label>
+                <input type="password" id="novaSenha" name="novaSenha" required>
+
+                <button type="button" onclick="submeterAlteracoesUsuario()">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
         // Chame a função carregarUsuarios assim que a página for carregada
         document.addEventListener('DOMContentLoaded', carregarUsuarios);
 
- async function carregarUsuarios() {
-    console.log("Carregando usuários...");
-    try {
-        const url = 'http://localhost:9090/lista-usuarios';
-        const response = await fetch(url);
+        async function carregarUsuarios() {
+            console.log("Carregando usuários...");
+            try {
+                const url = 'http://localhost:9090/buscar-usuarios';
+                const response = await fetch(url);
 
-        if (response.ok) {
-            const usuarios = await response.json();
-            console.log("Usuários carregados com sucesso:", usuarios);
-            exibirUsuarios(usuarios);
-        } else {
-            console.error('Erro ao carregar usuários:', response.statusText);
+                if (response.ok) {
+                    const usuarios = await response.json();
+                    console.log("Usuários carregados com sucesso:", usuarios);
+                    exibirUsuarios(usuarios);
+                } else {
+                    console.error('Erro ao carregar usuários:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+            }
         }
-    } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
-    }
-}
 
-function exibirUsuarios(usuarios) {
-    const tabelaCorpo = document.getElementById('tabelaCorpo');
-    tabelaCorpo.innerHTML = '';
+        function exibirUsuarios(usuarios) {
+            const tabelaCorpo = document.getElementById('tabelaCorpo');
+            tabelaCorpo.innerHTML = '';
 
-    if (usuarios.length === 0) {
-        console.log("A lista de usuários está vazia.");
-        return;
-    }
+            if (usuarios.length === 0) {
+                console.log("A lista de usuários está vazia.");
+                return;
+            }
 
-    usuarios.forEach(usuario => {
-        const newRow = tabelaCorpo.insertRow();
-        newRow.innerHTML = `
-            <td>${usuario.nome}</td>
-            <td>${usuario.cpf || 'N/A'}</td>
-            <td>${usuario.email}</td>
-            <td>${usuario.status === 1 ? 'Ativo' : 'Inativo'}</td>
-            <td><button class="btn-alterar-usuario" onclick="editarUsuario('${usuario.nome}', '${usuario.cpf}', ${usuario.status})">Alterar</button></td>
-        `;
-    });
+            usuarios.forEach(usuario => {
+                const newRow = tabelaCorpo.insertRow();
+                newRow.innerHTML = `
+                    <td>${usuario.nome}</td>
+                    <td>${usuario.email}</td>
+                    <td>${usuario.status === 'ativo' ? 'Ativo' : 'Inativo'}</td>
+                    <td>${usuario.grupo === 'admin' ? 'Administrador' : 'Estoquista'}</td>
+                    <td>
+                        <button class="btn-alterar-caracteristicas" onclick="abrirModalAlterarUsuario('${usuario.nome}')">Alterar Características</button>
+                        <button class="btn-alterar-status" onclick="editarStatus('${usuario.nome}', '${usuario.status}')">Alterar Status</button>
+                    </td>
+                `;
+            });
 
-    console.log("Usuários exibidos na tabela com sucesso.");
-}
+            console.log("Usuários exibidos na tabela com sucesso.");
+        }
+
+        async function abrirModalAlterarUsuario(nome) {
+            document.getElementById('novoNome').value = '';
+            document.getElementById('novoCPF').value = '';
+            document.getElementById('novaSenha').value = '';
+            document.getElementById('modalAlterarUsuario').style.display = 'block';
+        }
+
+        async function obterInformacoesUsuario(nome) {
+            const url = `http://localhost:9090/obter-informacoes-usuario?nome=${nome}`;
+            const response = await fetch(url);
+
+            if (response.ok) {
+                const usuario = await response.json();
+                return usuario;
+            } else {
+                console.error(`Erro ao obter informações do usuário ${nome}: ${response.statusText}`);
+                return null;
+            }
+        }
+
+        function fecharModalAlterarUsuario() {
+            document.getElementById('modalAlterarUsuario').style.display = 'none';
+        }
+
+        async function submeterAlteracoesUsuario() {
+            const nome = document.getElementById('novoNome').value;
+            const cpf = document.getElementById('novoCPF').value;
+            const senha = document.getElementById('novaSenha').value;
+
+            const url = 'http://localhost:9090/editar'; // Verifique se o URL está correto
+            const data = {
+                nome: nome,
+                cpf: cpf,
+                senha: senha
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    console.log(`Informações do usuário ${nome} alteradas com sucesso.`);
+                    fecharModalAlterarUsuario();
+                    // Recarrega a lista de usuários após a edição
+                    carregarUsuarios();
+                } else {
+                    console.error(`Erro ao alterar informações do usuário ${nome}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error(`Erro ao alterar informações do usuário ${nome}: ${error}`);
+            }
+        }
+
+
+
+        async function editarStatus(nome, status) {
+            const novoStatus = prompt(`Digite o novo status para ${nome}:`, status);
+            if (novoStatus !== null) {
+                // Se o usuário não cancelar, realiza a edição
+                const url = `http://localhost:9090/editar-status-usuario?nome=${nome}&status=${novoStatus}`;
+                const response = await fetch(url);
+
+                if (response.ok) {
+                    console.log(`Status do usuário ${nome} editado com sucesso. Novo status: ${novoStatus}`);
+                    // Recarrega a lista de usuários após a edição
+                    carregarUsuarios();
+                } else {
+                    console.error(`Erro ao editar status do usuário ${nome}: ${response.statusText}`);
+                }
+            }
+        }
     </script>
 </body>
 

@@ -20,13 +20,13 @@ public class CadastrarController {
 
     @PostMapping("/salvar")
     public String salvarUsuario(@RequestParam("nome") String nome,
-                                @RequestParam("cpf") String cpf,
-                                @RequestParam("email") String email,
-                                @RequestParam("senha") String senha,
-                                @RequestParam("verificarSenha") String verificarSenha,
-                                @RequestParam("grupo") String grupo,
-                                @RequestParam(value = "status", defaultValue = "0") String status,
-                                Model model) {
+            @RequestParam("cpf") String cpf,
+            @RequestParam("email") String email,
+            @RequestParam("senha") String senha,
+            @RequestParam("verificarSenha") String verificarSenha,
+            @RequestParam("grupo") String grupo,
+            @RequestParam(value = "status", defaultValue = "0") String status,
+            Model model) {
 
         // Verificar se a senha e a confirmação de senha são iguais
         if (!senha.equals(verificarSenha)) {
@@ -52,6 +52,10 @@ public class CadastrarController {
 
                     if (rowsAffected > 0) {
                         System.out.println("Usuário inserido com sucesso!");
+
+                        // Remover o campo "cpf" do model antes de redirecionar e exibir na página
+                        model.asMap().remove("cpf");
+
                         return "redirect:/login"; // Redireciona para a página de login após o cadastro bem-sucedido
                     } else {
                         model.addAttribute("erroBanco", "Falha ao inserir usuário. Nenhuma linha afetada.");
@@ -68,6 +72,4 @@ public class CadastrarController {
             return "cadastro-usuarios";
         }
     }
-
 }
-
