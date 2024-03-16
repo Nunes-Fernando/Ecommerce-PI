@@ -6,6 +6,119 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lista-usuario.css">
     <title>Lista de Usuários</title>
+    
+     <style>
+	body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Cor de fundo suave */
+}
+
+/* Estilo para o container principal */
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff; /* Fundo branco */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+/* Estilo para o título da página */
+.container h2 {
+    margin-top: 0;
+    color: #333; /* Cor do texto escura */
+}
+
+/* Estilo para o link "Cadastrar Usuário" */
+.btn-cadastrar-usuario {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #007bff; /* Azul padrão do Bootstrap */
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cadastrar-usuario:hover {
+    background-color: #0056b3; /* Cor mais escura ao passar o mouse */
+}
+
+/* Estilo para a tabela de usuários */
+.tabela-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-usuarios th,
+.tabela-usuarios td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6; /* Linha divisória suave */
+}
+
+/* Estilo para os botões dentro da tabela */
+.tabela-usuarios .btn-alterar-caracteristicas,
+.tabela-usuarios .btn-alterar-status {
+    padding: 8px 16px;
+    margin: 4px;
+    background-color: #28a745; /* Verde */
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tabela-usuarios .btn-alterar-caracteristicas:hover,
+.tabela-usuarios .btn-alterar-status:hover {
+    background-color: #218838; /* Cor mais escura ao passar o mouse */
+}
+
+/* Estilo para o modal de alterar usuário */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+	</style>
+    
 </head>
 
 <body>
