@@ -65,14 +65,11 @@ public class CadastrarProdutos {
 				imageNames.add(imageName);
 			}
 
-			// Agora você pode salvar o produto no banco de dados junto com os nomes das imagens
-			// productService.saveProduct(productName, productPrice, productQuantity, productDescription, productRating, imageNames);
-
-			// Redirecionar para a página de sucesso ou outra página adequada
+			
 			return "redirect:/lista-produtos";
 		} catch (Exception e) {
 			e.printStackTrace();
-			// Lidar com o erro
+			
 			return "redirect:/error";
 		}
 	}

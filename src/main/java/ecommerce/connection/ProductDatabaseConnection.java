@@ -6,9 +6,9 @@ import java.util.*;
 
 public class ProductDatabaseConnection {
 
-    private static final String URL = "jdbc:mysql://localhost:3307/cadastroProdutos";
+    private static final String URL = "jdbc:mysql://localhost:3306/cadastroProdutos";
     private static final String USER = "root";
-    private static final String PASSWORD = "1234";
+    private static final String PASSWORD = "root";
     private static Connection connection = null;
 
     public static Connection getConnection() {
@@ -75,10 +75,10 @@ public class ProductDatabaseConnection {
                     product.put("descricao", resultSet.getString("descricao"));
                     product.put("avaliacao", resultSet.getInt("avaliacao"));
 
-                    // Obter imagem como array de bytes
+                   
                     byte[] imageData = resultSet.getBytes("imagem");
 
-                    // Converter a imagem para base64
+                    
                     String base64Image = Base64.getEncoder().encodeToString(imageData);
 
                     product.put("imagem", base64Image);
