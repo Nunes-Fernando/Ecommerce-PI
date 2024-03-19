@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Produtos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Adicionando FontAwesome para ícones -->
     <style>
         /* Estilos para melhorar a aparência da lista de produtos */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f3f3;
             margin: 0;
             padding: 0;
         }
@@ -24,6 +25,7 @@
             margin-bottom: 30px;
             color: #333;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 2rem;
         }
 
         .products {
@@ -35,7 +37,7 @@
         .product {
             background-color: #fff;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
@@ -46,21 +48,21 @@
         }
 
         .product img {
-    max-width: 100%; /* Garante que a imagem não exceda a largura do contêiner pai */
-    max-height: 200px; /* Define uma altura máxima para a imagem */
-    border-radius: 5px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
         .product h2 {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             margin-bottom: 10px;
             color: #333;
         }
 
         .product p {
-            font-size: 1rem;
+            font-size: 1.2rem;
             color: #666;
             margin-bottom: 8px;
         }
@@ -68,18 +70,48 @@
         .product-price {
             font-weight: bold;
             color: #e67e22;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
 
         .product-rating {
             color: #f39c12;
             font-weight: bold;
         }
+
+        /* Estilos para o botão */
+        .btn-add-product {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 15px;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            font-size: 1.4rem;
+        }
+
+        .btn-add-product:hover {
+            background-color: #45a049;
+        }
+
+        /* Ícones */
+        .fa-shopping-cart {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Lista de Produtos</h1>
+        <!-- Botão para adicionar novo produto -->
+        <a href="/cadastrar-produtos.html" class="btn-add-product"><i class="fas fa-plus"></i> Adicionar Novo Produto</a>
+
         <!-- Loop através dos produtos cadastrados -->
         <!-- Substitua 'products' com a variável que contém os produtos do seu backend -->
         <div class="products">
@@ -101,3 +133,5 @@
     </div>
 </body>
 </html>
+
+
