@@ -1,94 +1,173 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro de Produtos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produtos</title>
 
-  <style>
-    body {
-      font-family: 'Noto Sans', sans-serif;
-      background-color: #201b2c; /* Cor de destaque de fundo */
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
+    <style>
+        body {
+          font-family: 'Noto Sans', sans-serif;
+          background-color: #201b2c; /* Cor de destaque de fundo */
+          margin: 0;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+        }
 
-    form {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-      padding: 20px;
-      width: 400px;
-      text-align: center;
-    }
+        form {
+          background-color: #fff;
+          border-radius: 8px;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+          padding: 20px;
+          width: 400px;
+          text-align: center;
+        }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-    }
+        label {
+          display: block;
+          margin-bottom: 8px;
+        }
 
-    input, textarea, select {
-      width: calc(100% - 16px);
-      padding: 8px;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+        input, textarea, select {
+          width: calc(100% - 16px);
+          padding: 8px;
+          margin-bottom: 16px;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
 
-    button {
-      background-color: #2ecc71; /* Cor do botão */
-      color: #fff;
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+        button {
+          background-color: #2ecc71; /* Cor do botão */
+          color: #fff;
+          padding: 10px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
 
-    button:hover {
-      background-color: #27ae60; /* Cor do botão ao passar o mouse */
-    }
+        button:hover {
+          background-color: #27ae60; /* Cor do botão ao passar o mouse */
+        }
 
-    #productImageDisplay {
-      max-width: 100%;
-      margin-top: 16px;
-      border-radius: 4px;
-    }
-  </style>
+        #productImageDisplay {
+          max-width: 100%;
+          margin-top: 16px;
+          border-radius: 4px;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+
+        .thumbnail {
+          display: inline-block;
+          width: 80px;
+          height: 80px;
+          margin-right: 10px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        .thumbnail img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 4px;
+        }
+
+        .selected {
+          border: 2px solid #2ecc71; /* Cor da borda verde */
+        }    </style>
 </head>
 <body>
 
- <form id="productForm" action="/cadastrarProduto" method="post" enctype="multipart/form-data">
+<form id="productForm" action="/cadastrarProduto" method="post" enctype="multipart/form-data">
     <label for="productName">Nome do Produto:</label>
     <input type="text" id="productName" name="productName" required>
-  
+
     <label for="productPrice">Preço do Produto (R$):</label>
     <input type="number" id="productPrice" name="productPrice" min="0" step="0.01" required>
-  
+
     <label for="productQuantity">Quantidade:</label>
     <input type="number" id="productQuantity" name="productQuantity" min="0" required>
-  
+
     <label for="productDescription">Descrição do Produto:</label>
     <textarea id="productDescription" name="productDescription" rows="4" required></textarea>
-  
-    <label for="productImage">Imagem do Produto:</label>
-    <input type="file" id="productImage" name="productImage" accept="image/*" multiple required>
-  
+
+    <label for="productImage">Imagens do Produto:</label>
+    <input type="file" id="productImage" name="productImages" accept="image/*" multiple required>
+    <div id="productImageDisplay"></div>
+
     <label for="productRating">Avaliação do Produto:</label>
     <select id="productRating" name="productRating" required>
-      <option value="1">1 - Péssimo</option>
-      <option value="2">2 - Ruim</option>
-      <option value="3">3 - Regular</option>
-      <option value="4">4 - Bom</option>
-      <option value="5">5 - Excelente</option>
+        <option value="1">1 - Péssimo</option>
+        <option value="2">2 - Ruim</option>
+        <option value="3">3 - Regular</option>
+        <option value="4">4 - Bom</option>
+        <option value="5">5 - Excelente</option>
     </select>
-  
-    <button type="submit">Cadastrar Produto</button>
+
+    <!-- Adicione um campo hidden para armazenar o índice da imagem principal -->
+    <input type="hidden" id="mainImageIndex" name="mainImageIndex">
+
+    <!-- Adicione um botão para cancelar o cadastro -->
+    <button type="button" onclick="window.location.href='/lista-produtos'">Cancelar</button>
+
+    <!-- Altere o tipo do botão de submit para button -->
+    <button type="button" onclick="submitForm()">Cadastrar Produto</button>
 </form>
 
+<script>
+    function submitForm() {
+        // Defina o índice da imagem principal
+        var mainImageIndex = document.getElementById('mainImageIndex').value;
+        // Adicione o índice da imagem principal ao campo hidden
+        document.getElementById('mainImageIndex').value = mainImageIndex;
+
+        // Envie o formulário
+        document.getElementById('productForm').submit();
+    }
+
+    document.getElementById('productImage').addEventListener('change', function(event) {
+      const productImageDisplay = document.getElementById('productImageDisplay');
+      productImageDisplay.innerHTML = '';
+
+      for (let i = 0; i < event.target.files.length; i++) {
+        const image = event.target.files[i];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          const thumbnail = document.createElement('div');
+          thumbnail.classList.add('thumbnail');
+
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = image.name;
+          img.title = image.name;
+
+          thumbnail.appendChild(img);
+          productImageDisplay.appendChild(thumbnail);
+
+          thumbnail.addEventListener('click', function() {
+            // Remove a classe 'selected' de todas as miniaturas
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(function(item) {
+              item.classList.remove('selected');
+            });
+
+            // Adiciona a classe 'selected' apenas na miniatura clicada
+            thumbnail.classList.add('selected');
+
+            document.getElementById('mainImageIndex').value = i; // Define o índice da imagem principal
+            // Adicione aqui qualquer outra ação que você queira realizar quando uma miniatura for selecionada como imagem principal
+          });
+        };
+
+        reader.readAsDataURL(image);
+      }
+    });
+</script>
 </body>
 </html>

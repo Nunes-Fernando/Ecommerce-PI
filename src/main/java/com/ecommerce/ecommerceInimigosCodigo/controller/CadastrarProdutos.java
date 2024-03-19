@@ -22,63 +22,26 @@ import java.util.List;
 @Controller
 public class CadastrarProdutos {
 
-	@GetMapping("/cadastrar-produtos")
-	public String showProductForm() {
-		return "cadastrar-produtos";
-	}
+    @GetMapping("/cadastrar-produtos")
+    public String showProductForm() {
+        return "cadastrar-produtos";
+    }
 
-	@Controller
-	@RequestMapping("/cadastrarProduto")
-	public class CadastrarProdutosController {
+    @PostMapping("/cadastrarProduto")
+    public String cadastrarProduto(@RequestParam("productName") String productName,
+                                   @RequestParam("productPrice") double productPrice,
+                                   @RequestParam("productQuantity") int productQuantity,
+                                   @RequestParam("productDescription") String productDescription,
+                                   @RequestParam("productRating") int productRating,
+                                   @RequestParam("productImages") MultipartFile[] productImages,
+                                   Model model) {
+        try {
+            // Lógica para cadastrar o produto
 
-		@PostMapping
-		public String cadastrarProduto(String productName, double productPrice, int productQuantity, String productDescription, int productRating, MultipartFile productImage, Model model) {
-			try {
-				byte[] imageData = productImage.getBytes();
-				boolean produtoCadastrado = ProductDatabaseConnection.saveProduct(productName, productPrice, productQuantity, productDescription, productRating, imageData);
-				if (produtoCadastrado) {
-					model.addAttribute("mensagem", "Produto cadastrado com sucesso!");
-				} else {
-					model.addAttribute("mensagem", "Erro ao cadastrar o produto. Por favor, tente novamente.");
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				model.addAttribute("mensagem", "Erro ao cadastrar o produto. Por favor, tente novamente.");
-			}
-			return "cadastrar-erro";
-		}
-	}
-
-	@PostMapping
-	public String cadastrarProduto(@RequestParam("productName") String productName,
-								   @RequestParam("productPrice") double productPrice,
-								   @RequestParam("productQuantity") int productQuantity,
-								   @RequestParam("productDescription") String productDescription,
-								   @RequestParam("productRating") int productRating,
-								   @RequestParam("productImages") MultipartFile[] productImages,
-								   Model model) {
-		try {
-			List<String> imageNames = new ArrayList<>();
-			for (MultipartFile image : productImages) {
-				// Salvar a imagem e obter o nome do arquivo salvo
-				String imageName = saveImage(image);
-				imageNames.add(imageName);
-			}
-
-			
-			return "redirect:/lista-produtos";
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-			return "redirect:/error";
-		}
-	}
-
-	private String saveImage(MultipartFile image) throws IOException {
-		String imageName = "prefixo_" + System.currentTimeMillis() + "_" + image.getOriginalFilename();
-		byte[] imageData = image.getBytes();
-		Path imagePath = Paths.get("caminho/para/salvar/as/imagens/" + imageName);
-		Files.write(imagePath, imageData);
-		return imageName;
-	}
+            return "redirect:/lista-produtos"; // Redireciona para a página de listagem de produtos
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/error"; // Redireciona para a página de erro em caso de falha
+        }
+    }
 }
