@@ -28,4 +28,9 @@ public class ListarProdutosController {
             return "redirect:/error"; 
         }
     }
+    
+    @GetMapping("/redirecionar-para-cadastrar-produtos")
+    public String redirecionarParaCadastrarProdutos() {
+        return "redirect:/cadastrar-produtos"; // Corrija o caminho se necessário
+    }
 }
