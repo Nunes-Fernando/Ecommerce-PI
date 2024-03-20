@@ -20,13 +20,13 @@ public class CadastrarController {
 
     @PostMapping("/salvar")
     public String salvarUsuario(@RequestParam("nome") String nome,
-            @RequestParam("cpf") String cpf,
-            @RequestParam("email") String email,
-            @RequestParam("senha") String senha,
-            @RequestParam("verificarSenha") String verificarSenha,
-            @RequestParam("grupo") String grupo,
-            @RequestParam(value = "status", defaultValue = "0") String status,
-            Model model) {
+                                @RequestParam("cpf") String cpf,
+                                @RequestParam("email") String email,
+                                @RequestParam("senha") String senha,
+                                @RequestParam("verificarSenha") String verificarSenha,
+                                @RequestParam("grupo") String grupo,
+                                @RequestParam(value = "status", defaultValue = "0") String status,
+                                Model model) {
 
         // Verificar se a senha e a confirmação de senha são iguais
         if (!senha.equals(verificarSenha)) {
@@ -34,7 +34,12 @@ public class CadastrarController {
             return "cadastro-usuarios";
         }
 
+        // Verificar se o e-mail já está em uso
         Connection connection = new Connection();
+        if (connection.existeUsuarioComEmail(email)) {
+            model.addAttribute("erroEmail", "Este e-mail já está em uso. Por favor, escolha outro.");
+            return "cadastro-usuarios";
+        }
 
         try (java.sql.Connection conn = connection.getConnection()) {
             if (conn != null) {
@@ -72,4 +77,6 @@ public class CadastrarController {
             return "cadastro-usuarios";
         }
     }
+
+
 }

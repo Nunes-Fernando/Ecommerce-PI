@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Connection {
-    private static String url = "jdbc:mysql://localhost:3306/consulta";
+    private static String url = "jdbc:mysql://localhost:3307/consulta";
     private static String user = "root";
-    private static String password = "root";
+    private static String password = "1234";
     private static java.sql.Connection conn = null;
 
     public static java.sql.Connection getConnection() {
@@ -84,12 +84,27 @@ public class Connection {
     }
 
     public boolean inserirUsuario(String nome, String cpf, String senha, String verificarSenha, String grupo,
-            String email, String status) {
-        String query = "INSERT INTO usuarios (nome, cpf, senha, verificarSenha, grupo, email, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                                  String email, String status) {
+        String queryVerificarEmail = "SELECT COUNT(*) FROM usuarios WHERE email = ?";
+        String queryInserirUsuario = "INSERT INTO usuarios (nome, cpf, senha, verificarSenha, grupo, email, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (java.sql.Connection connection = getConnection()) {
             if (connection != null) {
-                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                // Verifica se o e-mail já está cadastrado
+                try (PreparedStatement verificarEmailStatement = connection.prepareStatement(queryVerificarEmail)) {
+                    verificarEmailStatement.setString(1, email);
+                    try (ResultSet resultSet = verificarEmailStatement.executeQuery()) {
+                        resultSet.next();
+                        int count = resultSet.getInt(1);
+                        if (count > 0) {
+                            System.out.println("Erro: E-mail já cadastrado.");
+                            return false; // Retorna false se o e-mail já estiver cadastrado
+                        }
+                    }
+                }
+
+                // Insere o usuário se o e-mail não estiver duplicado
+                try (PreparedStatement preparedStatement = connection.prepareStatement(queryInserirUsuario)) {
                     preparedStatement.setString(1, nome);
                     preparedStatement.setString(2, cpf);
                     preparedStatement.setString(3, senha);
@@ -116,6 +131,28 @@ public class Connection {
             e.printStackTrace(); // Trate as exceções adequadamente em um aplicativo real
             return false;
         }
+    }
+
+    public boolean existeUsuarioComEmail(String email) {
+        String query = "SELECT COUNT(*) AS count FROM usuarios WHERE email = ?";
+        try (java.sql.Connection connection = getConnection()) {
+            if (connection != null) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                    preparedStatement.setString(1, email);
+                    try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                        if (resultSet.next()) {
+                            int count = resultSet.getInt("count");
+                            return count > 0;
+                        }
+                    }
+                }
+            } else {
+                System.out.println("A conexão não está aberta. Verifique sua configuração.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public List<Map<String, Object>> buscarUsuarios() {

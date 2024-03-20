@@ -1,21 +1,15 @@
 package com.ecommerce.ecommerceInimigosCodigo.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.ui.Model;
 
 import ecommerce.connection.ProductDatabaseConnection;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +30,20 @@ public class CadastrarProdutos {
                                    @RequestParam("productImages") MultipartFile[] productImages,
                                    Model model) {
         try {
-            // Lógica para cadastrar o produto
+            List<byte[]> imageDataList = new ArrayList<>();
+            for (MultipartFile image : productImages) {
+                byte[] imageData = image.getBytes();
+                imageDataList.add(imageData);
+            }
 
-            return "redirect:/lista-produtos"; // Redireciona para a página de listagem de produtos
+            // Salvar o produto no banco de dados
+            boolean produtoSalvo = ProductDatabaseConnection.saveProduct(productName, productPrice, productQuantity, productDescription, productRating, imageDataList);
+
+            if (produtoSalvo) {
+                return "redirect:/lista-produtos"; // Redireciona para a página de listagem de produtos
+            } else {
+                return "redirect:/error"; // Redireciona para a página de erro em caso de falha ao salvar o produto
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/error"; // Redireciona para a página de erro em caso de falha
