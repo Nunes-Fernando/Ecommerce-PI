@@ -6,7 +6,7 @@ import java.util.*;
 
 public class ProductDatabaseConnection {
 
-    private static final String URL = "jdbc:mysql://localhost:3307/cadastroProdutos";
+    private static final String URL = "jdbc:mysql://localhost:3306/cadastroProdutos";
     private static final String USER = "root";
     private static final String PASSWORD = "1234";
     private static Connection connection = null;
@@ -36,8 +36,8 @@ public class ProductDatabaseConnection {
         }
     }
 
-    public static boolean saveProduct(String productName, double productPrice, int productQuantity,
-                                      String productDescription, int productRating, List<byte[]> productImages) {
+    public static int saveProduct(String productName, double productPrice, int productQuantity,
+                                  String productDescription, int productRating, List<byte[]> productImages, int mainImageIndex) {
         String query = "INSERT INTO produtos (nome, preco, quantidade, descricao, avaliacao) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
@@ -51,7 +51,7 @@ public class ProductDatabaseConnection {
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
-                return false;
+                return -1; // Retorne -1 em caso de falha ao salvar o produto
             }
 
             // Obtém o ID do produto inserido
@@ -63,40 +63,51 @@ public class ProductDatabaseConnection {
                 throw new SQLException("Falha ao obter o ID do produto.");
             }
 
-            // Insere as imagens na tabela imagens associadas ao produto
-            String insertImageQuery = "INSERT INTO imagens (produto_id, imagem_path) VALUES (?, ?)";
-            for (byte[] imageData : productImages) {
-                PreparedStatement imageStatement = conn.prepareStatement(insertImageQuery);
-                imageStatement.setInt(1, productId);
-                imageStatement.setBytes(2, imageData);
-                imageStatement.executeUpdate();
-                imageStatement.close();
+            // Associa as imagens ao produto
+            boolean imagesSaved = saveProductImages(productId, productImages, mainImageIndex);
+
+            if (!imagesSaved) {
+                throw new SQLException("Falha ao associar as imagens ao produto.");
             }
 
-            return true;
+            return productId;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return -1; // Retorne -1 em caso de exceção
         }
     }
 
-    public static boolean saveProductImages(String productName, List<byte[]> imageDataList) {
-        String query = "INSERT INTO imagens (produto_id, imagem_path) SELECT id, ? FROM produtos WHERE nome = ?";
+
+    public static boolean setMainProductImage(int productId, int mainImageIndex) {
+        String query = "UPDATE imagens SET is_main = CASE WHEN id = ? THEN 1 ELSE 0 END WHERE produto_id = ?";
 
         try (Connection conn = getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(query)) {
 
-            for (byte[] imageData : imageDataList) {
-                preparedStatement.setBytes(1, imageData);
-                preparedStatement.setString(2, productName);
-                preparedStatement.addBatch();
-            }
+            preparedStatement.setInt(1, mainImageIndex);
+            preparedStatement.setInt(2, productId);
 
-            int[] rowsAffected = preparedStatement.executeBatch();
-            for (int row : rowsAffected) {
-                if (row <= 0) {
-                    return false;
-                }
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Retorna false em caso de erro
+        }
+    }
+
+
+
+    public static boolean saveProductImages(int productId, List<byte[]> imageDataList, int mainImageIndex) {
+        String query = "INSERT INTO imagens (produto_id, imagem_path, is_main) VALUES (?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+
+            for (int i = 0; i < imageDataList.size(); i++) {
+                preparedStatement.setInt(1, productId);
+                preparedStatement.setBytes(2, imageDataList.get(i));
+                preparedStatement.setBoolean(3, i == mainImageIndex); // Define se é a imagem principal ou não
+                preparedStatement.executeUpdate();
             }
 
             return true;
@@ -109,7 +120,8 @@ public class ProductDatabaseConnection {
 
     public static List<Map<String, Object>> getProducts() {
         List<Map<String, Object>> productList = new ArrayList<>();
-        String query = "SELECT p.*, i.imagem_path FROM produtos p LEFT JOIN imagens i ON p.id = i.produto_id";
+        String query = "SELECT p.id, p.nome AS nome_produto, p.preco, p.quantidade, p.descricao, p.avaliacao, i.imagem_path " +
+                "FROM produtos p LEFT JOIN imagens i ON p.id = i.produto_id WHERE i.is_main = TRUE";
 
         try (Connection conn = getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(query);
@@ -118,20 +130,19 @@ public class ProductDatabaseConnection {
             while (resultSet.next()) {
                 Map<String, Object> product = new HashMap<>();
                 product.put("id", resultSet.getInt("id"));
-                product.put("nome", resultSet.getString("nome"));
+                product.put("nome", resultSet.getString("nome_produto"));
                 product.put("preco", resultSet.getDouble("preco"));
                 product.put("quantidade", resultSet.getInt("quantidade"));
                 product.put("descricao", resultSet.getString("descricao"));
                 product.put("avaliacao", resultSet.getInt("avaliacao"));
 
-                // Verifica se há imagem associada ao produto
                 Blob imageDataBlob = resultSet.getBlob("imagem_path");
                 if (imageDataBlob != null) {
                     byte[] imageData = imageDataBlob.getBytes(1, (int) imageDataBlob.length());
                     String base64Image = Base64.getEncoder().encodeToString(imageData);
                     product.put("imagem", base64Image);
                 } else {
-                    product.put("imagem", null); // Se não houver imagem, coloque como nulo
+                    product.put("imagem", null);
                 }
 
                 productList.add(product);
@@ -142,4 +153,5 @@ public class ProductDatabaseConnection {
 
         return productList;
     }
-    }
+
+}

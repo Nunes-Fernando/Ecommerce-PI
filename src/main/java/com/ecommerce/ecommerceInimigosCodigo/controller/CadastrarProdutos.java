@@ -10,6 +10,10 @@ import org.springframework.ui.Model;
 import ecommerce.connection.ProductDatabaseConnection;
 
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,7 @@ public class CadastrarProdutos {
                                    @RequestParam("productDescription") String productDescription,
                                    @RequestParam("productRating") int productRating,
                                    @RequestParam("productImages") MultipartFile[] productImages,
+                                   @RequestParam("mainImageIndex") int mainImageIndex,
                                    Model model) {
         try {
             List<byte[]> imageDataList = new ArrayList<>();
@@ -36,10 +41,10 @@ public class CadastrarProdutos {
                 imageDataList.add(imageData);
             }
 
-            // Salvar o produto no banco de dados
-            boolean produtoSalvo = ProductDatabaseConnection.saveProduct(productName, productPrice, productQuantity, productDescription, productRating, imageDataList);
+            // Salvar o produto no banco de dados e obter o ID do produto inserido
+            int productId = ProductDatabaseConnection.saveProduct(productName, productPrice, productQuantity, productDescription, productRating, imageDataList, mainImageIndex);
 
-            if (produtoSalvo) {
+            if (productId != -1) {
                 return "redirect:/lista-produtos"; // Redireciona para a página de listagem de produtos
             } else {
                 return "redirect:/error"; // Redireciona para a página de erro em caso de falha ao salvar o produto
