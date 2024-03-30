@@ -28,5 +28,7 @@ public class PrincipalController {
         Connection connection = new Connection();
         return connection.buscarUsuarios();
     }
+    
+    
 
 }

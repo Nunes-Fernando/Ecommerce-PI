@@ -1,5 +1,6 @@
 package com.ecommerce.ecommerceInimigosCodigo.controller;
 
+import java.security.MessageDigest;
 import java.sql.PreparedStatement;
 
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ecommerce.connection.Connection;
 
+ // Importe a classe Connection corretamente
+
 @Controller
 public class CadastrarController {
 
@@ -17,6 +20,8 @@ public class CadastrarController {
     public String showLoginPage() {
         return "cadastro-usuarios";
     }
+    
+   
 
     @PostMapping("/salvar")
     public String salvarUsuario(@RequestParam("nome") String nome,
@@ -34,21 +39,20 @@ public class CadastrarController {
             return "cadastro-usuarios";
         }
 
-        // Verificar se o e-mail já está em uso
-        Connection connection = new Connection();
-        if (connection.existeUsuarioComEmail(email)) {
-            model.addAttribute("erroEmail", "Este e-mail já está em uso. Por favor, escolha outro.");
-            return "cadastro-usuarios";
-        }
+        // Encriptar as senhas antes de salvar no banco de dados
+        String senhaEncriptada = encriptarSenha(senha);
+        String verificarSenhaEncriptada = encriptarSenha(verificarSenha);
 
-        try (java.sql.Connection conn = connection.getConnection()) {
+        // Restante do seu código...
+
+        try (java.sql.Connection conn = Connection.getConnection()) {
             if (conn != null) {
                 String query = "INSERT INTO usuarios (nome, cpf, senha, verificarSenha, grupo, email, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                     preparedStatement.setString(1, nome);
                     preparedStatement.setString(2, cpf);
-                    preparedStatement.setString(3, senha);
-                    preparedStatement.setString(4, verificarSenha);
+                    preparedStatement.setString(3, senhaEncriptada); // Salvar senha encriptada no banco
+                    preparedStatement.setString(4, verificarSenhaEncriptada); // Salvar senha de verificação encriptada no banco
                     preparedStatement.setString(5, grupo);
                     preparedStatement.setString(6, email);
                     preparedStatement.setString(7, status);
@@ -56,12 +60,11 @@ public class CadastrarController {
                     int rowsAffected = preparedStatement.executeUpdate();
 
                     if (rowsAffected > 0) {
-                        System.out.println("Usuário inserido com sucesso!");
-
-                        // Remover o campo "cpf" do model antes de redirecionar e exibir na página
+                        // Remover o campo "cpf" do model antes de redirecionar
                         model.asMap().remove("cpf");
 
-                        return "redirect:/login"; // Redireciona para a página de login após o cadastro bem-sucedido
+                        // Redirecionar para a página de login após o cadastro bem-sucedido
+                        return "redirect:/login";
                     } else {
                         model.addAttribute("erroBanco", "Falha ao inserir usuário. Nenhuma linha afetada.");
                         return "cadastro-usuarios";
@@ -78,5 +81,22 @@ public class CadastrarController {
         }
     }
 
+    // Método para encriptar a senha usando SHA-256
+    private String encriptarSenha(String senha) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(senha.getBytes("UTF-8"));
+            StringBuilder hexString = new StringBuilder();
 
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 }

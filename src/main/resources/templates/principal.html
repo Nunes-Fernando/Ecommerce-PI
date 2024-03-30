@@ -22,18 +22,29 @@
         </ul>
    </div>
 
-     <script>
-        // Adiciona um evento de clique ao link "Listar Cliente"
-        document.getElementById('listarUsuarios').addEventListener('click', function() {
-            // Redireciona para a página de lista de usuários
-            window.location.href = '/lista-usuarios';
-        });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+   
+    var userRole = 'estoquista'; 
+   
+    var listarUsuariosBtn = document.getElementById('listarUsuarios');
+    listarUsuariosBtn.addEventListener('click', function() {
+        
+        window.location.href = '/lista-usuarios';
+    });
 
-        // Adicione um evento de clique ao link "Listar Produtos"
-        document.getElementById('listarProdutos').addEventListener('click', function() {
-            // Redireciona para a página de listar produtos
-            window.location.href = '/lista-produtos';
-        });
-    </script>
+  
+    var listarProdutosBtn = document.getElementById('listarProdutos');
+    listarProdutosBtn.addEventListener('click', function() {
+        
+        window.location.href = '/lista-produtos';
+    });
+
+   
+    if (userRole === 'estoquista') {
+        listarUsuariosBtn.style.display = 'none';
+    }
+});
+   </script>
 </body>
 </html>

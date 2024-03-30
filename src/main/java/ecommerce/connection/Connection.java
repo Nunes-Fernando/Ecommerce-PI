@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ecommerce.senha.TratamentoSenha;
+
 public class Connection {
     private static String url = "jdbc:mysql://localhost:3306/consulta";
     private static String user = "root";
-    private static String password = "1234";
+    private static String password = "root";
     private static java.sql.Connection conn = null;
 
     public static java.sql.Connection getConnection() {
@@ -28,6 +30,8 @@ public class Connection {
             return null;
         }
     }
+    
+    
 
     public List<Map<String, Object>> buscarTodosUsuarios() {
         String query = "SELECT nome, email, grupo, status FROM usuarios";
@@ -58,19 +62,22 @@ public class Connection {
     }
 
     public boolean verificarCredenciais(String email, String senha) {
-        String query = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
+        String query = "SELECT senha FROM usuarios WHERE email = ?";
+        String senhaEncriptada = TratamentoSenha.encriptarSenha(senha); // Encriptar a senha fornecida pelo usuário
 
         try (java.sql.Connection connection = getConnection()) {
             if (connection != null) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                     preparedStatement.setString(1, email);
-                    preparedStatement.setString(2, senha);
 
                     try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                        boolean hasMatch = resultSet.next();
-                        // Você pode processar ou armazenar informações do ResultSet aqui se necessário
-
-                        return hasMatch; // Retorna true se houver uma correspondência
+                        if (resultSet.next()) {
+                            String senhaArmazenada = resultSet.getString("senha");
+                            return senhaArmazenada.equals(senhaEncriptada);
+                        } else {
+                            // Não há usuário com o e-mail fornecido
+                            return false;
+                        }
                     }
                 }
             } else {
@@ -82,6 +89,7 @@ public class Connection {
             return false;
         }
     }
+
 
     public boolean inserirUsuario(String nome, String cpf, String senha, String verificarSenha, String grupo,
                                   String email, String status) {
