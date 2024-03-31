@@ -4,6 +4,9 @@ import java.sql.*;
 import java.sql.Connection;
 import java.util.*;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ProductDatabaseConnection {
 
     private static final String URL = "jdbc:mysql://localhost:3306/cadastroProdutos";

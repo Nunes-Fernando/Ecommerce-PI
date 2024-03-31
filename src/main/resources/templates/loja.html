@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Loja</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-DZMeTuXeAaq6XC8OJVGAjlvLAsPV1LKqIShy9R3PJPvZwqGzQ5yk9Bz+0t34gum5" crossorigin="anonymous">
+    <style>
+		
+		body{
+			  background-color: #201b2c;
+		}
+        /* Estilo do cabeçalho */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header .logo {
+            display: inline-block;
+            font-size: 24px;
+        }
+
+        header .logo img {
+            height: 80px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        header .carrinho i {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        header .carrinho:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Estilo dos links de login e cadastro */
+        .links {
+            display: flex;
+            align-items: center;
+        }
+
+        .links a {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+            font-family: Arial, sans-serif; /* Altere a fonte conforme desejado */
+            font-size: 16px; /* Altere o tamanho da fonte conforme desejado */
+        }
+
+        .links a:hover {
+            color: #ffcc00; /* Cor a ser ajustada conforme o seu design */
+        }
+
+        /* Estilo do rodapé */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        /* Estilo do conteúdo principal */
+        main {
+            padding: 20px;
+            margin-top: 60px; /* Altura do cabeçalho */
+            margin-bottom: 60px; /* Altura do rodapé */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Exemplo de estilo para produtos */
+        .produto {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 10px;
+            width: 300px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .produto:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .produto h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .produto p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .produto button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .produto button:hover {
+            background-color: #45a049;
+        }
+
+        .carrinho {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header>
+        <div class="logo">
+            <img src="logo-loja.png" alt="Logotipo da Minha Loja">
+        </div>
+        <div class="links">
+            <a href="#" class="login-link">Login</a>
+            <a href="#" class="cadastro-link">Cadastre-se</a>
+        </div>
+        <div class="carrinho">
+            <i class="fas fa-shopping-cart"></i> 
+            <img src="carrinho.jpg" alt="Carrinho da loja" class="carrinho">
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main id="productList">
+        <!-- Os cards de produtos serão inseridos aqui dinamicamente -->
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        &copy; Inimigos do código.
+    </footer>
+
+    <script>
+        // Função para carregar os produtos ao carregar a página
+        window.onload = function() {
+            loadProducts();
+        };
+
+        // Função para carregar os produtos
+        function loadProducts() {
+            fetch('/getProducts') // Substitua '/getProducts' pela rota correta para obter os produtos do seu backend
+                .then(response => response.json())
+                .then(products => {
+                    var productList = document.getElementById("productList");
+
+                    // Limpar a lista de produtos
+                    productList.innerHTML = "";
+
+                    // Adicionar os cards de produtos
+                    products.forEach(function(product) {
+                        var productCard = `
+                            <div class="produto">
+                                <h2>${product.nome}</h2>
+                                <p>${product.descricao}</p>
+                                <p>Preço: R$ ${product.preco.toFixed(2)}</p>
+                                <button onclick="addToCart(${product.id})">Adicionar ao Carrinho</button>
+                            </div>
+                        `;
+                        productList.innerHTML += productCard;
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar os produtos:', error));
+        }
+
+        // Função para adicionar um produto ao carrinho
+        function addToCart(productId) {
+            // Aqui você pode implementar a lógica para adicionar o produto ao carrinho
+            console.log('Produto adicionado ao carrinho:', productId);
+        }
+    </script>
+</body>
+</html>
+
