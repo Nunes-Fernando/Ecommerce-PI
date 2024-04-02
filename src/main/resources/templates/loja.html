@@ -6,12 +6,11 @@
     <title>Minha Loja</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-DZMeTuXeAaq6XC8OJVGAjlvLAsPV1LKqIShy9R3PJPvZwqGzQ5yk9Bz+0t34gum5" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Adicionando FontAwesome para ícones -->
-
     <style>
 
-		body{
-			  background-color: #201b2c;
-		}
+        body{
+              background-color: #201b2c;
+        }
       header {
             background-color: #333;
             color: #fff;
@@ -102,6 +101,7 @@
             margin: 10px;
             width: 300px;
             transition: box-shadow 0.3s ease;
+            position: relative; /* Adicionado para posicionar o botão */
         }
 
         .produto:hover {
@@ -131,6 +131,10 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            position: absolute; /* Adicionado */
+            bottom: 10px; /* Adicionado */
+            left: 50%; /* Adicionado */
+            transform: translateX(-50%); /* Adicionado */
         }
 
         .produto button:hover {
@@ -142,7 +146,7 @@
             height: 50px;
         }
 
-      /* Estilos para melhorar a aparência da lista de produtos */
+        /* Estilos para melhorar a aparência da lista de produtos */
 
 /* Resetando estilos do body */
 body {
@@ -175,6 +179,7 @@ body {
     height: 519.98px; /* Altura original */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
+    position: relative; /* Adicionado */
 }
 
 .product .product-image img {
@@ -324,106 +329,179 @@ body {
 .pagination a:hover:not(.active) {
     background-color: #45a049;
 }
+
+ /* Estilo do modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Conteúdo do modal */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        /* Fechar o botão do modal */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilo para a imagem no modal */
+        .product-details .product-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo para os detalhes do produto no modal */
+        .product-details .product-info {
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Cabeçalho -->
-    <header id="header">
-        <div class="logo">
-            <img src="logo-loja.png" alt="Logotipo da Minha Loja">
-        </div>
-        <div class="links">
-            <a href="/login" class="login-link">Login</a>
-            <a href="/cadastrar-usuarios" class="cadastro-link">Cadastre-se</a>
-        </div>
-        <div class="carrinho">
-            <i class="fas fa-shopping-cart"></i>
-        </div>
-    </header>
+<!-- Cabeçalho -->
+<header id="header">
+    <div class="logo">
+        <img src="logo-loja.png" alt="Logotipo da Minha Loja">
+    </div>
+    <div class="links">
+        <a href="/login" class="login-link">Login</a>
+        <a href="/cadastrar-usuarios" class="cadastro-link">Cadastre-se</a>
+    </div>
+    <div class="carrinho">
+        <i class="fas fa-shopping-cart"></i>
+    </div>
+</header>
 
-    <!-- Conteúdo principal -->
-    <main id="productList">
-        <div class="container">
-            <!-- Campo de pesquisa -->
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Pesquisar produto...">
-                <button onclick="searchProducts()"><i class="fas fa-search"></i> Pesquisar</button>
-            </div>
+<!-- Conteúdo principal -->
+<main id="productList">
+    <div class="container">
+        <!-- Campo de pesquisa -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Pesquisar produto...">
+            <button onclick="searchProducts()"><i class="fas fa-search"></i> Pesquisar</button>
+        </div>
 
-            <!-- Botão para adicionar novo produto -->
-            <a href="/redirecionar-para-cadastrar-produtos" class="btn-add-product"><i class="fas fa-plus"></i></a>
-
-            <!-- Loop através dos produtos cadastrados -->
-            <!-- Substitua 'products' com a variável que contém os produtos do seu backend -->
-            <div class="products">
-                <!-- Exibir os produtos -->
-                <div th:each="product : ${products}" class="product">
-                    <!-- Exibir a imagem do produto -->
-                    <div class="product-image">
-                        <img th:src="'data:image/jpeg;base64,' + ${product.imagem}" alt="Imagem do Produto">
-                    </div>
-                    <div class="product-info">
-                        <!-- Exibir as informações do produto -->
-                        <h2 th:text="${product.nome}">Nome do Produto</h2>
-                        <p th:text="${product.descricao}">Descrição do Produto</p>
-                        <p class="product-price">Preço: R$<span th:text="${product.preco}">Preço do Produto</span></p>
-                        <p>Quantidade disponível: <span th:text="${product.quantidade}">Quantidade do Produto</span></p>
-                        <p class="product-rating">Avaliação: <span th:text="${product.avaliacao}">Avaliação do Produto</span>/5</p>
+        <!-- Loop através dos produtos cadastrados -->
+        <!-- Substitua 'products' com a variável que contém os produtos do seu backend -->
+        <div class="products">
+            <!-- Exibir os produtos -->
+            <div th:each="product : ${products}" class="product">
+                <!-- Exibir a imagem do produto -->
+                <div class="product-image">
+                    <img th:src="'data:image/jpeg;base64,' + ${product.imagem}" alt="Imagem do Produto">
+                </div>
+                <div class="product-info">
+                    <!-- Exibir as informações do produto -->
+                    <h2 th:text="${product.nome}">Nome do Produto</h2>
+                    <p th:text="${product.descricao}">Descrição do Produto</p>
+                    <p class="product-price">Preço: R$<span th:text="${product.preco}">Preço do Produto</span></p>
+                    <p>Quantidade disponível: <span th:text="${product.quantidade}">Quantidade do Produto</span></p>
+                    <p class="product-rating">Avaliação: <span th:text="${product.avaliacao}">Avaliação do Produto</span>/5</p>
+                    <button onclick="openModal(this, event)">Exibir Detalhes</button>
+                    <!-- Modal -->
+                    <div class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal(this)">&times;</span>
+                            <div class="product-details">
+                                <div class="product-image">
+                                    <img th:src="'data:image/jpeg;base64,' + ${product.imagem}" alt="Imagem do Produto">
+                                </div>
+                                <div class="product-info">
+                                    <h2 th:text="${product.nome}">Nome do Produto</h2>
+                                    <p th:text="${product.descricao}">Descrição do Produto</p>
+                                    <p class="product-price">Preço: R$<span th:text="${product.preco}">Preço do Produto</span></p>
+                                    <p>Quantidade disponível: <span th:text="${product.quantidade}">Quantidade do Produto</span></p>
+                                    <p class="product-rating">Avaliação: <span th:text="${product.avaliacao}">Avaliação do Produto</span>/5</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- Adicione mais produtos conforme necessário -->
             </div>
+            <!-- Adicione mais produtos conforme necessário -->
+        </div>
 
-            <!-- Paginação -->
-            <div class="pagination">
-                <a href="#" class="active">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">4</a>
-                <a href="#">5</a>
-            </div>
-        </div>    </main>
+        <!-- Paginação -->
+        <div class="pagination">
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+        </div>
+    </div>
+</main>
 
-    <!-- Rodapé -->
-    <footer>
-        &copy; Inimigos do código.
-    </footer>
+<!-- Rodapé -->
+<footer>
+    &copy; Inimigos do código.
+</footer>
 
-    <script>
-
-        // Função para pesquisar produtos
-function searchProducts() {
-    var input = document.getElementById('searchInput').value.toUpperCase();
-    // Obter todos os produtos
-    var products = document.querySelectorAll('.product');
-    for (var i = 0; i < products.length; i++) {
-        var productName = products[i].querySelector('h2').innerText.toUpperCase();
-        if (productName.indexOf(input) > -1) {
-            products[i].classList.add('visible');
-            products[i].classList.remove('hidden');
-        } else {
-            products[i].classList.add('hidden');
-            products[i].classList.remove('visible');
+<script>
+    function searchProducts() {
+        var input = document.getElementById('searchInput').value.toUpperCase();
+        var products = document.querySelectorAll('.product');
+        for (var i = 0; i < products.length; i++) {
+            var productName = products[i].querySelector('h2').innerText.toUpperCase();
+            if (productName.indexOf(input) > -1) {
+                products[i].classList.add('visible');
+                products[i].classList.remove('hidden');
+            } else {
+                products[i].classList.add('hidden');
+                products[i].classList.remove('visible');
+            }
         }
     }
-}
 
-         var lastScrollTop = 0;
+    function openModal(button, event) {
+        event.stopPropagation(); // Impede a propagação do evento de clique para os elementos pai
+        var modal = button.parentElement.querySelector('.modal');
+        modal.style.display = "block";
+    }
 
-        // Função para esconder ou mostrar o cabeçalho ao rolar a página
-        window.addEventListener("scroll", function() {
-            var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-            if (currentScroll > lastScrollTop) {
-                // Scroll para baixo
-                document.getElementById("header").style.top = "-60px"; // Esconde o cabeçalho
-            } else {
-                // Scroll para cima
-                document.getElementById("header").style.top = "0"; // Mostra o cabeçalho
+    function closeModal(closeButton) {
+        var modal = closeButton.parentElement.parentElement;
+        modal.style.display = "none";
+    }
+
+    // Fechar o modal se o usuário clicar fora dele
+    window.onclick = function(event) {
+        var modals = document.getElementsByClassName('modal');
+        for (var i = 0; i < modals.length; i++) {
+            if (event.target == modals[i]) {
+                modals[i].style.display = "none";
             }
-            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Corrige o comportamento no topo da página
-        });
+        }
+    };
+</script>
 
-    </script>
+</script>
 </body>
 </html>
-
