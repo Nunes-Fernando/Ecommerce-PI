@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductDatabaseConnection {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/cadastroProdutos";
+    private static final String URL = "jdbc:mysql://localhost:3307/cadastroProdutos";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "1234";
     private static Connection connection = null;
 
     public static Connection getConnection() {

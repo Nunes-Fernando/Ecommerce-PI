@@ -12,9 +12,9 @@ import java.util.Map;
 import ecommerce.senha.TratamentoSenha;
 
 public class Connection {
-    private static String url = "jdbc:mysql://localhost:3306/consulta";
+    private static String url = "jdbc:mysql://localhost:3307/consulta";
     private static String user = "root";
-    private static String password = "root";
+    private static String password = "1234";
     private static java.sql.Connection conn = null;
 
     public static java.sql.Connection getConnection() {
