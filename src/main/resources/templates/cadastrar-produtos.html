@@ -85,22 +85,22 @@
 </head>
 <body>
 
+
 <form id="productForm" action="/cadastrarProduto" method="post" enctype="multipart/form-data">
     <label for="productName">Nome do Produto:</label>
     <input type="text" id="productName" name="productName" required>
 
     <label for="productPrice">Preço do Produto (R$):</label>
-    <input type="number" id="productPrice" name="productPrice" min="0" step="0.01" required>
+    <input type="number" id="productPrice" name="productPrice" min="0.01" step="0.01" required>
 
     <label for="productQuantity">Quantidade:</label>
-    <input type="number" id="productQuantity" name="productQuantity" min="0" required>
+    <input type="number" id="productQuantity" name="productQuantity" min="1" required>
 
     <label for="productDescription">Descrição do Produto:</label>
     <textarea id="productDescription" name="productDescription" rows="4" required></textarea>
 
-    <label for="productImage">Imagens do Produto:</label>
-    <input type="file" id="productImage" name="productImages" accept="image/*" multiple required>
-    <div id="productImageDisplay"></div>
+    <label for="productImage">Imagem do Produto:</label>
+    <input type="file" id="productImage" name="productImage" accept="image/*" required>
 
     <label for="productRating">Avaliação do Produto:</label>
     <select id="productRating" name="productRating" required>
@@ -111,25 +111,44 @@
         <option value="5">5 - Excelente</option>
     </select>
 
-    <!-- Adicione um campo hidden para armazenar o índice da imagem principal -->
-    <input type="hidden" id="mainImageIndex" name="mainImageIndex">
-
-    <!-- Adicione um botão para cancelar o cadastro -->
+    <!-- Botão para cancelar o cadastro -->
     <button type="button" onclick="window.location.href='/lista-produtos'">Cancelar</button>
 
-    <!-- Altere o tipo do botão de submit para button -->
-    <button type="button" onclick="submitForm()">Cadastrar Produto</button>
+    <!-- Botão para submeter o formulário -->
+    <button type="submit">Cadastrar Produto</button>
 </form>
 
 <script>
-    function submitForm() {
-        // Verificar se os campos obrigatórios estão preenchidos
-        var productName = document.getElementById('productName').value;
-        var productPrice = document.getElementById('productPrice').value;
-        var productQuantity = document.getElementById('productQuantity').value;
-        var productDescription = document.getElementById('productDescription').value;
+    document.getElementById('productImage').addEventListener('change', function(event) {
+        const file = event.target.files[0]; // Obtém o primeiro arquivo selecionado
 
-        if (!productName || !productPrice || !productQuantity || !productDescription) {
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = file.name;
+                img.title = file.name;
+                img.style.maxWidth = '100%'; // Limitar a largura da imagem
+
+                // Exibir a imagem em uma div
+                const productImageDisplay = document.getElementById('productImageDisplay');
+                productImageDisplay.innerHTML = ''; // Limpa o conteúdo anterior
+                productImageDisplay.appendChild(img);
+            };
+            reader.readAsDataURL(file); // Lê o arquivo como uma URL de dados
+        }
+    });
+
+    function submitForm() {
+        const productName = document.getElementById('productName').value;
+        const productPrice = document.getElementById('productPrice').value;
+        const productQuantity = document.getElementById('productQuantity').value;
+        const productDescription = document.getElementById('productDescription').value;
+        const productRating = document.getElementById('productRating').value;
+
+        // Verificar se os campos obrigatórios estão preenchidos
+        if (!productName || !productPrice || !productQuantity || !productDescription || !productRating) {
             alert("Por favor, preencha todos os campos obrigatórios.");
             return;
         }
@@ -140,54 +159,9 @@
             return;
         }
 
-        // Definir o índice da imagem principal
-        var mainImageIndex = document.getElementById('mainImageIndex').value;
-
-        // Adicionar o índice da imagem principal ao campo hidden
-        document.getElementById('mainImageIndex').value = mainImageIndex;
-
-        // Enviar o formulário
+        // Submete o formulário
         document.getElementById('productForm').submit();
     }
-
-    document.getElementById('productImage').addEventListener('change', function(event) {
-        const productImageDisplay = document.getElementById('productImageDisplay');
-        productImageDisplay.innerHTML = '';
-
-        for (let i = 0; i < event.target.files.length; i++) {
-            const image = event.target.files[i];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const thumbnail = document.createElement('div');
-                thumbnail.classList.add('thumbnail');
-
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = image.name;
-                img.title = image.name;
-
-                thumbnail.appendChild(img);
-                productImageDisplay.appendChild(thumbnail);
-
-                thumbnail.addEventListener('click', function() {
-                    // Remover a classe 'selected' de todas as miniaturas
-                    const thumbnails = document.querySelectorAll('.thumbnail');
-                    thumbnails.forEach(function(item) {
-                        item.classList.remove('selected');
-                    });
-
-                    // Adicionar a classe 'selected' apenas à miniatura clicada
-                    thumbnail.classList.add('selected');
-
-                    document.getElementById('mainImageIndex').value = i; // Definir o índice da imagem principal
-                    // Adicionar aqui qualquer outra ação que você queira realizar quando uma miniatura for selecionada como imagem principal
-                });
-            };
-
-            reader.readAsDataURL(image);
-        }
-    });
 </script>
 </body>
 </html>

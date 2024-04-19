@@ -48,6 +48,20 @@ app.post('/cadastrarProduto', upload.array('productImage', 5), (req, res) => {
     console.log('Produto cadastrado com sucesso.');
     res.send('Produto cadastrado com sucesso.');
   });
+
+  const sql = `
+      INSERT INTO produtos (nome, preco, quantidade, descricao, imagem_principal, imagens_secundarias, avaliacao)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(sql, [productName, productPrice, productQuantity, productDescription, mainImage, JSON.stringify(productImages), productRating], (err, result) => {
+      if (err) {
+          console.error('Erro ao inserir produto no banco de dados:', err);
+          return res.status(500).send('Erro ao cadastrar produto.');
+      }
+      console.log('Produto cadastrado com sucesso.');
+      res.status(200).send('Produto cadastrado com sucesso.');
+  });
 });
 
 const PORT = process.env.PORT || 3000;
