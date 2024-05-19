@@ -25,7 +25,7 @@ public class LoginController {
         boolean loginSucess = userService.verificarCredenciais(email, senha);
         if (loginSucess) {
             // Redirecione para a página inicial ou outra página do seu aplicativo após o login bem-sucedido
-            return "redirect:/";
+            return "redirect:/principal";
         } else {
             model.addAttribute("error", "Credenciais inválidas. Por favor, tente novamente.");
             return "login";

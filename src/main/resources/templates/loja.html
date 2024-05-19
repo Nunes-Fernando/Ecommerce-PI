@@ -412,10 +412,10 @@ body {
         <!-- Substitua 'products' com a variável que contém os produtos do seu backend -->
         <div class="products">
             <!-- Exibir os produtos -->
-            <div th:each="product : ${products}" class="product">
+            <div th:each="product : ${produtos}" class="product">
                 <!-- Exibir a imagem do produto -->
                 <div class="product-image">
-                    <img th:src="'data:image/jpeg;base64,' + ${product.imagem}" alt="Imagem do Produto">
+                    <img th:src="'data:image/jpeg;base64,' + ${product.imagemPathAsBase64}" alt="Imagem do Produto">
                 </div>
                 <div class="product-info">
                     <!-- Exibir as informações do produto -->
@@ -424,25 +424,6 @@ body {
                     <p class="product-price">Preço: R$<span th:text="${product.preco}">Preço do Produto</span></p>
                     <p>Quantidade disponível: <span th:text="${product.quantidade}">Quantidade do Produto</span></p>
                     <p class="product-rating">Avaliação: <span th:text="${product.avaliacao}">Avaliação do Produto</span>/5</p>
-                    <button onclick="openModal(this, event)">Exibir Detalhes</button>
-                    <!-- Modal -->
-                    <div class="modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="closeModal(this)">&times;</span>
-                            <div class="product-details">
-                                <div class="product-image">
-                                    <img th:src="'data:image/jpeg;base64,' + ${product.imagem}" alt="Imagem do Produto">
-                                </div>
-                                <div class="product-info">
-                                    <h2 th:text="${product.nome}">Nome do Produto</h2>
-                                    <p th:text="${product.descricao}">Descrição do Produto</p>
-                                    <p class="product-price">Preço: R$<span th:text="${product.preco}">Preço do Produto</span></p>
-                                    <p>Quantidade disponível: <span th:text="${product.quantidade}">Quantidade do Produto</span></p>
-                                    <p class="product-rating">Avaliação: <span th:text="${product.avaliacao}">Avaliação do Produto</span>/5</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <!-- Adicione mais produtos conforme necessário -->
@@ -479,29 +460,6 @@ body {
             }
         }
     }
-
-    function openModal(button, event) {
-        event.stopPropagation(); // Impede a propagação do evento de clique para os elementos pai
-        var modal = button.parentElement.querySelector('.modal');
-        modal.style.display = "block";
-    }
-
-    function closeModal(closeButton) {
-        var modal = closeButton.parentElement.parentElement;
-        modal.style.display = "none";
-    }
-
-    // Fechar o modal se o usuário clicar fora dele
-    window.onclick = function(event) {
-        var modals = document.getElementsByClassName('modal');
-        for (var i = 0; i < modals.length; i++) {
-            if (event.target == modals[i]) {
-                modals[i].style.display = "none";
-            }
-        }
-    };
-</script>
-
 </script>
 </body>
 </html>

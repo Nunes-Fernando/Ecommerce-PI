@@ -19,14 +19,14 @@
    				 Login ou senha inválidos. Por favor, tente novamente.
 				</div>
 
-                <form action="/processar-login" method="post">
+                <form action="/login" method="post">
                     <div class="text-field">
-                        <label for="usuario">Usuário</label>
-                        <input type="text" name="usuario" placeholder="Usuário">
+                        <label for="email">Email</label>
+                        <input type="text" name="email" placeholder="Email" required>
                     </div>
                     <div class="text-field">
                         <label for="senha">Senha</label>
-                        <input type="password" name="senha" placeholder="Senha">
+                        <input type="password" name="senha" placeholder="Senha" required>
                     </div>
                     <button type="submit" class="btn-login">Login</button>
                 </form>
