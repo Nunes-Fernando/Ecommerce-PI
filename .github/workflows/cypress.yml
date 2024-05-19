@@ -22,7 +22,14 @@ jobs:
           node-version: '14'
 
       - name: Install Cypress
+<<<<<<< HEAD
         run: npm install -g cypress  
 
       - name: Run Cypress Tests
         run: cypress run  
+=======
+        run: npm install -g cypress  # Instalação global do Cypress
+
+      - name: Run Cypress Tests
+        run: cypress run  # Comando para executar os testes Cypress
+>>>>>>> dd76aa65bc93adeeb4d0ce0d5851ace918c50e37
