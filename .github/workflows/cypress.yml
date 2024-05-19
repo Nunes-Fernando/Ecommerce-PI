@@ -3,10 +3,10 @@ name: Cypress Tests
 on:
   push:
     branches:
-      - sprint4  
+      - main
   pull_request:
     branches:
-      - sprint4  
+      - main
 
 jobs:
   cypress-run:
@@ -21,8 +21,8 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install Cypress
+        run: npm install -g cypress  # Instalação global do Cypress
 
       - name: Run Cypress Tests
-        run: npm run cypress:run  
+        run: cypress run  # Comando para executar os testes Cypress
