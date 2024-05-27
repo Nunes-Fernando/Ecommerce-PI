@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Produto</title>
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background-color: #201b2c;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            color: #000;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 400px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, textarea, select {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        #productImageDisplay {
+            margin-top: 16px;
+        }
+
+        #productImageDisplay img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Editar Produto</h1>
+
+<form id="productForm" th:action="@{'/atualizar-produto/' + ${produto.id}}" method="post" enctype="multipart/form-data">
+    <label for="nome">Nome do Produto:</label>
+    <input type="text" id="nome" name="nome" th:value="${produto.nome}" required>
+
+    <label for="preco">Preço do Produto (R$):</label>
+    <input type="number" id="preco" name="preco" th:value="${produto.preco}" min="0.01" step="0.01" required>
+
+    <label for="quantidade">Quantidade:</label>
+    <input type="number" id="quantidade" name="quantidade" th:value="${produto.quantidade}" min="1" required>
+
+    <label for="descricao">Descrição do Produto:</label>
+    <textarea id="descricao" name="descricao" rows="4" required th:text="${produto.descricao}"></textarea>
+
+    <label for="imagem">Imagem do Produto:</label>
+    <input type="file" id="imagem" name="imagem" accept="image/*">
+
+    <div id="productImageDisplay">
+        <img th:if="${produto.imagemBase64}" th:src="@{'data:image/jpeg;base64,' + ${produto.imagemBase64}}" alt="Imagem do Produto">
+    </div>
+
+    <label for="avaliacao">Avaliação do Produto:</label>
+    <select id="avaliacao" name="avaliacao" required>
+        <option th:value="1" th:selected="${produto.avaliacao == 1}">1 - Péssimo</option>
+        <option th:value="2" th:selected="${produto.avaliacao == 2}">2 - Ruim</option>
+        <option th:value="3" th:selected="${produto.avaliacao == 3}">3 - Regular</option>
+        <option th:value="4" th:selected="${produto.avaliacao == 4}">4 - Bom</option>
+        <option th:value="5" th:selected="${produto.avaliacao == 5}">5 - Excelente</option>
+    </select>
+
+    <button type="submit">Salvar Alterações</button>
+</form>
+
+<script>
+    document.getElementById('imagem').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const productImageDisplay = document.getElementById('productImageDisplay');
+                if (productImageDisplay) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    img.title = file.name;
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '200px';
+                    productImageDisplay.innerHTML = '';
+                    productImageDisplay.appendChild(img);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+</body>
+</html>

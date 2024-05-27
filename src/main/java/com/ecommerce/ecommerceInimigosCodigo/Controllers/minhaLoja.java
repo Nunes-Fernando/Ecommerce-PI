@@ -17,8 +17,16 @@ public class minhaLoja {
     @GetMapping("/minha-loja")
     public String showMinhaLojaPage(Model model) {
         List<Produto> produtos = produtoRepository.findAll();
+
+        // Converter imagemPath para string base64
+        for (Produto produto : produtos) {
+            String base64Image = produto.getImagemPathAsBase64();
+            produto.setImagemPathAsBase64(base64Image);
+        }
+
         model.addAttribute("produtos", produtos);
         return "loja";
     }
 }
+
 
