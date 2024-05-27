@@ -19,9 +19,6 @@
             <li>
                 <a href="#" class="lista" id="listarUsuarios">Listar Usuários</a>
             </li>
-            <li>
-                <a href="#" class="lista" id="cadastrarProdutos">Cadastrar Produtos</a>
-            </li>
         </ul>
    </div>
 
@@ -32,23 +29,18 @@
     var listarUsuariosBtn = document.getElementById('listarUsuarios');
     listarUsuariosBtn.addEventListener('click', function() {
         
-        window.location.href = '/lista';
-    });
-
-          var cadastrarProdutosBtn = document.getElementById('cadastrarProdutos');
-    cadastrarProdutosBtn.addEventListener('click', function() {
-
-        window.location.href = '/cadastrar-produtos';
+        window.location.href = '/lista-usuarios';
     });
 
   
     var listarProdutosBtn = document.getElementById('listarProdutos');
     listarProdutosBtn.addEventListener('click', function() {
         
-        window.location.href = '/listar-produtos-cadastrados';
+        window.location.href = '/minha-loja';
     });
+
    
-    if (userRole === 'ADMIN') {
+    if (userRole === 'estoquista') {
         listarUsuariosBtn.style.display = 'none';
     }
 });
