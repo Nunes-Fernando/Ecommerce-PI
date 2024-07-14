@@ -123,7 +123,7 @@
 
 <body>
     <div class="container">
-        <a href="/cadastrar-usuarios" class="btn-cadastrar-usuario">Cadastrar Usuário</a>
+        <a href="/cadastro-usuarios" class="btn-cadastrar-usuario">Cadastrar Usuário</a>
 
         <!-- Tabela para exibir os usuários -->
         <table class="tabela-usuarios">
@@ -131,8 +131,6 @@
                 <tr>
                     <th>Nome</th>
                     <th>Email</th>
-                    <th>Status</th>
-                    <th>Grupo</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -142,12 +140,14 @@
         </table>
     </div>
 
-    <!-- Modal para alterar informações do usuário -->
     <div id="modalAlterarUsuario" class="modal">
         <div class="modal-content">
             <span class="close" onclick="fecharModalAlterarUsuario()">&times;</span>
             <h2>Alterar Informações do Usuário</h2>
             <form id="formAlterarUsuario">
+                <!-- Campo oculto para armazenar o ID do usuário -->
+                <input type="hidden" id="idUsuario" name="id">
+
                 <label for="novoNome">Novo Nome:</label>
                 <input type="text" id="novoNome" name="novoNome" required>
 
@@ -158,134 +158,173 @@
                 <input type="password" id="novaSenha" name="novaSenha" required>
 
                 <button type="button" onclick="submeterAlteracoesUsuario()">Salvar Alterações</button>
+                </button>
             </form>
         </div>
     </div>
 
     <script>
-        // Chame a função carregarUsuarios assim que a página for carregada
         document.addEventListener('DOMContentLoaded', carregarUsuarios);
 
-        async function carregarUsuarios() {
-            console.log("Carregando usuários...");
-            try {
-                const url = 'http://localhost:9090/buscar-usuarios';
-                const response = await fetch(url);
+       async function carregarUsuarios() {
+           console.log("Carregando usuários...");
+           try {
+               const url = '/buscar-usuarios';
+               const response = await fetch(url);
 
-                if (response.ok) {
-                    const usuarios = await response.json();
-                    console.log("Usuários carregados com sucesso:", usuarios);
-                    exibirUsuarios(usuarios);
-                } else {
-                    console.error('Erro ao carregar usuários:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Erro ao carregar usuários:', error);
-            }
+               if (response.ok) {
+                   const usuarios = await response.json();
+                   console.log("Usuários carregados com sucesso:", usuarios);
+                   exibirUsuarios(usuarios);
+               } else {
+                   console.error('Erro ao carregar usuários:', response.statusText);
+               }
+           } catch (error) {
+               console.error('Erro ao carregar usuários:', error);
+           }
+       }
+
+       function exibirUsuarios(usuarios) {
+           const tabelaCorpo = document.getElementById('tabelaCorpo');
+           tabelaCorpo.innerHTML = '';
+
+           if (usuarios.length === 0) {
+               console.log("A lista de usuários está vazia.");
+               return;
+           }
+
+           usuarios.forEach(usuario => {
+               const newRow = tabelaCorpo.insertRow();
+               newRow.innerHTML = `
+                   <td>${usuario.nome}</td>
+                   <td>${usuario.email}</td>
+
+                       <button class="btn-alterar-caracteristicas" onclick="abrirModalAlterarUsuario(${usuario.id})">Alterar Características</button>
+                       <button class="btn-alterar-caracteristicas btn-deletar-usuario" data-id="${usuario.id}" onclick="deletarUsuario(this)">Deletar Usuário</button>
+                   </td>
+               `;
+           });
+
+           console.log("Usuários exibidos na tabela com sucesso.");
+       }
+
+       async function abrirModalAlterarUsuario(idUsuario) {
+           const usuario = await obterInformacoesUsuario(idUsuario);
+           if (!usuario) {
+               console.error(`Erro ao obter informações do usuário com ID ${idUsuario}`);
+               return;
+           }
+
+           // Preencha os campos do modal com os dados do usuário
+           document.getElementById('idUsuario').value = usuario.id;
+           document.getElementById('novoNome').value = usuario.nome;
+           document.getElementById('novoCPF').value = usuario.cpf;
+           document.getElementById('novaSenha').value = usuario.senha;
+
+           // Mostre o modal
+           document.getElementById('modalAlterarUsuario').style.display = 'block';
+       }
+
+       async function obterInformacoesUsuario(id) {
+           const url = `/obter-usuario?id=${id}`;
+           const response = await fetch(url);
+
+           if (response.ok) {
+               return await response.json();
+           } else {
+               console.error(`Erro ao obter informações do usuário com ID ${id}: ${response.statusText}`);
+               return null;
+           }
+       }
+
+       async function submeterAlteracoesUsuario() {
+           const idUsuario = document.getElementById('idUsuario').value;
+           const novoNome = document.getElementById('novoNome').value;
+           const novoCPF = document.getElementById('novoCPF').value;
+           const novaSenha = document.getElementById('novaSenha').value;
+
+           const data = {
+               id: idUsuario,
+               nome: novoNome,
+               cpf: novoCPF,
+               senha: novaSenha
+           };
+
+           try {
+               const response = await fetch(`/editar-usuario`, {
+                   method: 'PUT',
+                   headers: {
+                       'Content-Type': 'application/json',
+                   },
+                   body: JSON.stringify(data)
+               });
+
+               if (response.ok) {
+                   console.log(`Informações do usuário com ID ${idUsuario} alteradas com sucesso.`);
+                   fecharModalAlterarUsuario();
+                   carregarUsuarios();
+               } else {
+                   console.error(`Erro ao alterar informações do usuário com ID ${idUsuario}: ${response.statusText}`);
+               }
+           } catch (error) {
+               console.error(`Erro ao alterar informações do usuário com ID ${idUsuario}: ${error}`);
+           }
+       }
+
+       function fecharModalAlterarUsuario() {
+           document.getElementById('modalAlterarUsuario').style.display = 'none';
+       }
+
+        async function editarStatus(id, novoStatus) {
+    const url = `/editar-status`;
+    const data = {
+        id: id,
+        status: novoStatus
+    };
+
+    try {
+        const response = await fetch(url,  {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            console.log(`Status do usuário com ID ${id} atualizado com sucesso.`);
+            carregarUsuarios(); // Recarrega a lista de usuários após a atualização
+        } else {
+            console.error(`Erro ao atualizar status do usuário com ID ${id}: ${response.statusText}`);
         }
+    } catch (error) {
+        console.error(`Erro ao atualizar status do usuário com ID ${id}: ${error}`);
+    }
+}
 
-        function exibirUsuarios(usuarios) {
-            const tabelaCorpo = document.getElementById('tabelaCorpo');
-            tabelaCorpo.innerHTML = '';
+      async function deletarUsuario(button) {
+    const idUsuario = button.getAttribute('data-id');
+    const confirmacao = confirm("Você realmente deseja deletar este usuário?");
 
-            if (usuarios.length === 0) {
-                console.log("A lista de usuários está vazia.");
-                return;
-            }
+    if (confirmacao) {
+        const url = `/deletar-usuario?id=${idUsuario}`;
 
-            usuarios.forEach(usuario => {
-                const newRow = tabelaCorpo.insertRow();
-                newRow.innerHTML = `
-                    <td>${usuario.nome}</td>
-                    <td>${usuario.email}</td>
-                    <td>${usuario.status === 'ativo' ? 'Ativo' : 'Inativo'}</td>
-                    <td>${usuario.grupo === 'admin' ? 'Administrador' : 'Estoquista'}</td>
-                    <td>
-                        <button class="btn-alterar-caracteristicas" onclick="abrirModalAlterarUsuario('${usuario.nome}')">Alterar Características</button>
-                        <button class="btn-alterar-status" onclick="editarStatus('${usuario.nome}', '${usuario.status}')">Alterar Status</button>
-                    </td>
-                `;
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
             });
 
-            console.log("Usuários exibidos na tabela com sucesso.");
-        }
-
-        async function abrirModalAlterarUsuario(nome) {
-            document.getElementById('novoNome').value = '';
-            document.getElementById('novoCPF').value = '';
-            document.getElementById('novaSenha').value = '';
-            document.getElementById('modalAlterarUsuario').style.display = 'block';
-        }
-
-        async function obterInformacoesUsuario(nome) {
-            const url = `http://localhost:9090/obter-informacoes-usuario?nome=${nome}`;
-            const response = await fetch(url);
-
             if (response.ok) {
-                const usuario = await response.json();
-                return usuario;
+                console.log(`Usuário com ID ${idUsuario} deletado com sucesso.`);
+                carregarUsuarios(); // Recarrega a lista de usuários após a exclusão
             } else {
-                console.error(`Erro ao obter informações do usuário ${nome}: ${response.statusText}`);
-                return null;
+                console.error(`Erro ao deletar usuário com ID ${idUsuario}: ${response.statusText}`);
             }
+        } catch (error) {
+            console.error(`Erro ao deletar usuário com ID ${idUsuario}: ${error}`);
         }
-
-        function fecharModalAlterarUsuario() {
-            document.getElementById('modalAlterarUsuario').style.display = 'none';
-        }
-
-        async function submeterAlteracoesUsuario() {
-            const nome = document.getElementById('novoNome').value;
-            const cpf = document.getElementById('novoCPF').value;
-            const senha = document.getElementById('novaSenha').value;
-
-            const url = 'http://localhost:9090/editar'; // Verifique se o URL está correto
-            const data = {
-                nome: nome,
-                cpf: cpf,
-                senha: senha
-            };
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    console.log(`Informações do usuário ${nome} alteradas com sucesso.`);
-                    fecharModalAlterarUsuario();
-                    // Recarrega a lista de usuários após a edição
-                    carregarUsuarios();
-                } else {
-                    console.error(`Erro ao alterar informações do usuário ${nome}: ${response.statusText}`);
-                }
-            } catch (error) {
-                console.error(`Erro ao alterar informações do usuário ${nome}: ${error}`);
-            }
-        }
-
-
-
-        async function editarStatus(nome, status) {
-            const novoStatus = prompt(`Digite o novo status para ${nome}:`, status);
-            if (novoStatus !== null) {
-                // Se o usuário não cancelar, realiza a edição
-                const url = `http://localhost:9090/editar-status-usuario?nome=${nome}&status=${novoStatus}`;
-                const response = await fetch(url);
-
-                if (response.ok) {
-                    console.log(`Status do usuário ${nome} editado com sucesso. Novo status: ${novoStatus}`);
-                    // Recarrega a lista de usuários após a edição
-                    carregarUsuarios();
-                } else {
-                    console.error(`Erro ao editar status do usuário ${nome}: ${response.statusText}`);
-                }
-            }
-        }
+    }
+}
     </script>
 </body>
 

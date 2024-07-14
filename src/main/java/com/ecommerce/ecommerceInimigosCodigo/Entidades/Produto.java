@@ -2,6 +2,8 @@ package com.ecommerce.ecommerceInimigosCodigo.Entidades;
 
 import javax.persistence.*;
 
+import java.util.Base64;
+
 @Entity
 @Table(name = "produtos")
 public class Produto {
@@ -90,5 +92,20 @@ public class Produto {
 
     public void setImagemPath(byte[] imagemPath) {
         this.imagemPath = imagemPath;
+    }
+
+    public String getImagemPathAsBase64() {
+        if (imagemPath != null) {
+            return Base64.getEncoder().encodeToString(imagemPath);
+        }
+        return null;
+    }
+
+    public void setImagemPathAsBase64(String base64String) {
+        if (base64String != null && !base64String.isEmpty()) {
+            this.imagemPath = Base64.getDecoder().decode(base64String);
+        } else {
+            this.imagemPath = null;
+        }
     }
 }

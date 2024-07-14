@@ -381,6 +381,47 @@ body {
         .product-details .product-info {
             margin-top: 20px;
         }
+        .menu {
+    display: flex;
+    align-items: center;
+}
+
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.bar {
+    width: 100%;
+    height: 3px;
+    background-color: #fff;
+    transition: 0.4s;
+}
+
+.menu-items {
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #333;
+    padding: 10px;
+}
+
+.menu-items a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.menu-items a:hover {
+    background-color: #555;
+}
+
 
     </style>
 </head>
@@ -390,9 +431,20 @@ body {
     <div class="logo">
         <img src="logo-loja.png" alt="Logotipo da Minha Loja">
     </div>
-    <div class="links">
-        <a href="/login" class="login-link">Login</a>
-        <a href="/cadastrar-usuarios" class="cadastro-link">Cadastre-se</a>
+    <div id="menu" class="menu">
+        <span class="username"></span>
+        <div class="links">
+            <a href="/login" class="login-link">Login</a>
+            <a href="/cadastro-usuarios" class="cadastro-link">Cadastre-se</a>
+        </div>
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div id="menu-items" class="menu-items">
+            <a href="#" onclick="logout()">Sair</a>
+        </div>
     </div>
     <div class="carrinho">
         <i class="fas fa-shopping-cart"></i>
@@ -412,10 +464,10 @@ body {
         <!-- Substitua 'products' com a variável que contém os produtos do seu backend -->
         <div class="products">
             <!-- Exibir os produtos -->
-            <div th:each="product : ${products}" class="product">
+            <div th:each="product : ${produtos}" class="product">
                 <!-- Exibir a imagem do produto -->
                 <div class="product-image">
-                    <img th:src="'data:image/jpeg;base64,' + ${product.imagem}" alt="Imagem do Produto">
+                    <img th:src="'data:image/jpeg;base64,' + ${product.imagemPathAsBase64}" alt="Imagem do Produto">
                 </div>
                 <div class="product-info">
                     <!-- Exibir as informações do produto -->
@@ -424,25 +476,6 @@ body {
                     <p class="product-price">Preço: R$<span th:text="${product.preco}">Preço do Produto</span></p>
                     <p>Quantidade disponível: <span th:text="${product.quantidade}">Quantidade do Produto</span></p>
                     <p class="product-rating">Avaliação: <span th:text="${product.avaliacao}">Avaliação do Produto</span>/5</p>
-                    <button onclick="openModal(this, event)">Exibir Detalhes</button>
-                    <!-- Modal -->
-                    <div class="modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="closeModal(this)">&times;</span>
-                            <div class="product-details">
-                                <div class="product-image">
-                                    <img th:src="'data:image/jpeg;base64,' + ${product.imagem}" alt="Imagem do Produto">
-                                </div>
-                                <div class="product-info">
-                                    <h2 th:text="${product.nome}">Nome do Produto</h2>
-                                    <p th:text="${product.descricao}">Descrição do Produto</p>
-                                    <p class="product-price">Preço: R$<span th:text="${product.preco}">Preço do Produto</span></p>
-                                    <p>Quantidade disponível: <span th:text="${product.quantidade}">Quantidade do Produto</span></p>
-                                    <p class="product-rating">Avaliação: <span th:text="${product.avaliacao}">Avaliação do Produto</span>/5</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <!-- Adicione mais produtos conforme necessário -->
@@ -479,28 +512,43 @@ body {
             }
         }
     }
+    function toggleMenu() {
+    var menuItems = document.getElementById("menu-items");
+    menuItems.style.display = (menuItems.style.display === "block") ? "none" : "block";
+}
 
-    function openModal(button, event) {
-        event.stopPropagation(); // Impede a propagação do evento de clique para os elementos pai
-        var modal = button.parentElement.querySelector('.modal');
-        modal.style.display = "block";
+document.addEventListener("DOMContentLoaded", function() {
+    var userEmail = sessionStorage.getItem("userEmail");
+    if (userEmail) {
+
+
+document.querySelector(".username").innerText = userEmail;
+        document.querySelector(".links").innerHTML = '<a href="#" onclick="logout()">Sair</a>';
     }
 
-    function closeModal(closeButton) {
-        var modal = closeButton.parentElement.parentElement;
-        modal.style.display = "none";
+else {
+        document.querySelector(".links").innerHTML = '<a href="/login">Login</a><a href="/cadastro-usuarios">Cadastro</a>';
     }
+});
 
-    // Fechar o modal se o usuário clicar fora dele
-    window.onclick = function(event) {
-        var modals = document.getElementsByClassName('modal');
-        for (var i = 0; i < modals.length; i++) {
-            if (event.target == modals[i]) {
-                modals[i].style.display = "none";
-            }
-        }
-    };
-</script>
+function logout() {
+    sessionStorage.removeItem("userEmail");
+
+
+window.location.href = "/logout"; // Redireciona para a página de logout
+}
+
+
+
+// Exibir o menu de hambúrguer se estiver em uma tela pequena
+window.addEventListener("resize", function() {
+    if (window.innerWidth < 768) {
+        document.querySelector(".hamburger-menu").style.display = "flex";
+    } else {
+        document.querySelector(".hamburger-menu").style.display = "none";
+        document.getElementById("menu-items").style.display = "none";
+    }
+});
 
 </script>
 </body>

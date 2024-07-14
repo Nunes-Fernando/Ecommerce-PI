@@ -1,4 +1,5 @@
 package com.ecommerce.ecommerceInimigosCodigo.Entidades;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,9 +14,10 @@ public class Usuario {
     private String cpf;
     private String senha;
     private String verificarSenha;
-    private String grupo;
     private String email;
-    private String status;
+    private String role; // Adicionando o campo role
+
+    // Getters e setters
 
     public Long getId() {
         return id;
@@ -57,14 +59,6 @@ public class Usuario {
         this.verificarSenha = verificarSenha;
     }
 
-    public String getGrupo() {
-        return grupo;
-    }
-
-    public void setGrupo(String grupo) {
-        this.grupo = grupo;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -73,11 +67,11 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getStatus() {
-        return status;
+    public String getRole() {
+        return role;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setRole(String role) {
+        this.role = role;
     }
 }

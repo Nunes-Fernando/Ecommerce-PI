@@ -86,7 +86,7 @@
 <body>
 
 
-<form id="productForm" action="/cadastrarProduto" method="post" enctype="multipart/form-data">
+<form id="productForm" action="/processarCadastroProduto" method="post" enctype="multipart/form-data">
     <label for="productName">Nome do Produto:</label>
     <input type="text" id="productName" name="productName" required>
 
@@ -120,48 +120,46 @@
 
 <script>
     document.getElementById('productImage').addEventListener('change', function(event) {
-        const file = event.target.files[0]; // Obtém o primeiro arquivo selecionado
-
+        const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = file.name;
-                img.title = file.name;
-                img.style.maxWidth = '100%'; // Limitar a largura da imagem
-
-                // Exibir a imagem em uma div
                 const productImageDisplay = document.getElementById('productImageDisplay');
-                productImageDisplay.innerHTML = ''; // Limpa o conteúdo anterior
-                productImageDisplay.appendChild(img);
+                if (productImageDisplay) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = file.name;
+                    img.title = file.name;
+                    img.style.maxWidth = '100%'; // Limitar a largura da imagem
+                    productImageDisplay.innerHTML = ''; // Limpa o conteúdo anterior
+                    productImageDisplay.appendChild(img);
+                }
             };
-            reader.readAsDataURL(file); // Lê o arquivo como uma URL de dados
+            reader.readAsDataURL(file);
         }
     });
+         function submitForm() {
+             const productName = document.getElementById('productName').value;
+             const productPrice = document.getElementById('productPrice').value;
+             const productQuantity = document.getElementById('productQuantity').value;
+             const productDescription = document.getElementById('productDescription').value;
+             const productRating = document.getElementById('productRating').value;
 
-    function submitForm() {
-        const productName = document.getElementById('productName').value;
-        const productPrice = document.getElementById('productPrice').value;
-        const productQuantity = document.getElementById('productQuantity').value;
-        const productDescription = document.getElementById('productDescription').value;
-        const productRating = document.getElementById('productRating').value;
+             // Verificar se os campos obrigatórios estão preenchidos
+             if (!productName || !productPrice || !productQuantity || !productDescription || !productRating) {
+                 alert("Por favor, preencha todos os campos obrigatórios.");
+                 return;
+             }
 
-        // Verificar se os campos obrigatórios estão preenchidos
-        if (!productName || !productPrice || !productQuantity || !productDescription || !productRating) {
-            alert("Por favor, preencha todos os campos obrigatórios.");
-            return;
-        }
+             // Verificar se os campos numéricos contêm apenas números válidos
+             if (isNaN(productPrice) || isNaN(productQuantity)) {
+                 alert("Por favor, insira apenas números válidos nos campos de preço e quantidade.");
+                 return;
+             }
 
-        // Verificar se os campos numéricos contêm apenas números válidos
-        if (isNaN(productPrice) || isNaN(productQuantity)) {
-            alert("Por favor, insira apenas números válidos nos campos de preço e quantidade.");
-            return;
-        }
-
-        // Submete o formulário
-        document.getElementById('productForm').submit();
-    }
+             // Submete o formulário
+             document.getElementById('productForm').submit();
+         }
 </script>
 </body>
 </html>

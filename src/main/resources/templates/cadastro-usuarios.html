@@ -15,7 +15,7 @@
         <div class="right-login">
             <div class="card-login">
                 <h1>Cadastre-se aqui:</h1>
-                <form action="/salvar" method="post" id="userForm" class="text-field">
+                <form action="/salvar-usuario" method="post" id="userForm" class="text-field">
                     <div class="text-field">
                         <label for="name">Nome do Usuário:</label>
                         <input type="text" id="name" name="nome" required>
@@ -45,13 +45,6 @@
                         <input type="password" id="password" name="verificarSenha" required>
                         <!-- Espaço para mensagem de erro -->
                         <span class="error-message" th:if="${erroVerificarSenha}" th:text="${erroVerificarSenha}"></span>
-                    </div>
-                    <div class="text-field">
-                        <label for="group">Grupo:</label>
-                        <select id="group" name="grupo">
-                            <option value="admin">Admin</option>
-                            <option value="estoquista">Estoquista</option>
-                        </select>
                     </div>
                     <div class="text-field">
                         <button type="button" class="btn-cancel">Cancelar</button>
